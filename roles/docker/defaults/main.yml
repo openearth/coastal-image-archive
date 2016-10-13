@@ -1,0 +1,5 @@
+---
+# defaults file for docker
+
+docker_user: docker
+docker_image: /data/docker/

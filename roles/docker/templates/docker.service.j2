@@ -1,0 +1,9 @@
+[Unit]
+Description=Docker Application Container Engine
+Documentation=https://docs.docker.com
+
+[Service]
+ExecStart=/usr/bin/docker daemon --graph="{{ docker_image }}"
+
+[Install]
+WantedBy=multi-user.target
