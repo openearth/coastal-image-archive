@@ -17,3 +17,12 @@
 - name: set hostname
   become: yes
   command: hostnamectl set-hostname {{ inventory_hostname }} --static
+
+- name: install essential stuff
+  become: yes
+  yum:  name={{ item }}
+        state=latest
+  with_items:
+    - unzip
+    - subversion
+    - git
