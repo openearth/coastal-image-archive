@@ -5,7 +5,7 @@
   shell: /sbin/ip addr sh eth0 | grep ether | awk '{ print $2 }'
   register: mac
 
-- fail: msg="MANUAL ACTION NEEDED: Put mac_address {{ mac.stdout }} in group_vars, request file installation key (FIK) and license.lic file put FIK as matlab_file_installation_key in group_vars as well as the matlab_installer and matlab_components"
+- fail: msg="MANUAL ACTION NEEDED\: Put mac_address {{ mac.stdout }} in group_vars, request file installation key (FIK) and license.lic file put FIK as matlab_file_installation_key in group_vars as well as the matlab_installer and matlab_components"
   when: mac.stdout != mac_address
 
 - name: install essential stuff
