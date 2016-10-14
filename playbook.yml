@@ -5,4 +5,5 @@
 
   roles:
     - { role: common, tags: 'common'}
+    - { role: matlab, tags: 'matlab'}
     - { role: docker, tags: 'docker'}
