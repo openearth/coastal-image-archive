@@ -18,11 +18,11 @@
 # as in:$ convert -size 32x32 xc:white empty.jpg
 
 # ENVIRONMENT VARIABLE(S):
-# You can use MYARGUSDIR to relocate the argus root directory
+# You can use MYIMAGESDIR to relocate the argus root directory
 
 
 # define variables
-ROOTARGUSDIR="$MYARGUSDIR/argus"
+ROOTIMAGESDIR="$MYIMAGESDIR/argus"
 # FS means fieldstation
 FSDIR="images"
 YEARNUMBER="$(date +%Y)"
@@ -44,42 +44,42 @@ fi
 
 # Check if necessary dirs exist
 declare -i result
-if [ ! -d "${ROOTARGUSDIR}" ] 
+if [ ! -d "${ROOTIMAGESDIR}" ] 
 then
-  echo "There is no ${ROOTARGUSDIR} directory yet!"
+  echo "There is no ${ROOTIMAGESDIR} directory yet!"
   read -p "Should I create it (y/n)? : " answer
   if [ "${answer}" == "y" ]
   then
-    mkdir "${ROOTARGUSDIR}" 
+    mkdir "${ROOTIMAGESDIR}" 
     result=$?
     if [ "${result}" -ge 1 ]
     then
-      echo "Error when trying to create directory ${ROOTARGUSDIR}"
+      echo "Error when trying to create directory ${ROOTIMAGESDIR}"
       exit
     fi
   else
-    echo "I need ${ROOTARGUSDIR} to exist"
+    echo "I need ${ROOTIMAGESDIR} to exist"
     echo "Aborting..."
     exit
   fi
 fi
 
-if [ ! -d "${ROOTARGUSDIR}/${FSDIR}" ]
+if [ ! -d "${ROOTIMAGESDIR}/${FSDIR}" ]
 then
-  echo "There is no ${ROOTARGUSDIR}/${FSDIR} directory yet!"
+  echo "There is no ${ROOTIMAGESDIR}/${FSDIR} directory yet!"
   read -p "Should I create it (y/n)? : " answer
   if [ "${answer}" == "y" ] 
   then
-    mkdir "${ROOTARGUSDIR}/${FSDIR}" 
+    mkdir "${ROOTIMAGESDIR}/${FSDIR}" 
     result=$?
     if [ "${result}" -eq 1 ]
     then
-      echo "Error when trying to create directory ${ROOTARGUSDIR}/${FSDIR}"
+      echo "Error when trying to create directory ${ROOTIMAGESDIR}/${FSDIR}"
       exit
     fi
 
   else
-    echo "I need ${ROOTARGUSDIR}/${FSDIR} to exist"
+    echo "I need ${ROOTIMAGESDIR}/${FSDIR} to exist"
     echo "Aborting..."
     exit
   fi
@@ -87,44 +87,44 @@ then
 else
   SUBDIR="${YEARNUMBER}.${DAYNUMBER}.${MONTH}${DAY}"
 
-  if [ ! -d "${ROOTARGUSDIR}/${FSDIR}/${SUBDIR}" ]
+  if [ ! -d "${ROOTIMAGESDIR}/${FSDIR}/${SUBDIR}" ]
   then
-    echo "There is no ${ROOTARGUSDIR}/${FSDIR}/${SUBDIR} directory yet!"
+    echo "There is no ${ROOTIMAGESDIR}/${FSDIR}/${SUBDIR} directory yet!"
     read -p "Should I create it (y/n)? : " answer
 
     if [ "${answer}" == "y" ]
     then
-      mkdir "${ROOTARGUSDIR}/${FSDIR}/${SUBDIR}" 
+      mkdir "${ROOTIMAGESDIR}/${FSDIR}/${SUBDIR}" 
       result=$?
       if [ "${result}" -eq 1 ]
       then
-        echo "Error when trying to create directory ${ROOTARGUSDIR}/${FSDIR}/${SUBDIR}"
+        echo "Error when trying to create directory ${ROOTIMAGESDIR}/${FSDIR}/${SUBDIR}"
         exit
       fi
 
     else
-      echo "I need ${ROOTARGUSDIR}/${FSDIR}/${SUBDIR} to store image files in"
+      echo "I need ${ROOTIMAGESDIR}/${FSDIR}/${SUBDIR} to store image files in"
       echo "Aborting..."
       exit
     fi
 
   fi  
-  echo "Making files in ${ROOTARGUSDIR}/${FSDIR}/${SUBDIR}"
+  echo "Making files in ${ROOTIMAGESDIR}/${FSDIR}/${SUBDIR}"
   # loop over CAMERAS
   for camera in $CAMERAS
   do 
     FILENAME="${EPOCHTIME}.c${camera}.${IMAGETYPE}.jpg"
     # convert -size 32x32 xc:white empty.jpg
     # convert -background white -fill black -pointsize 72 label:WhateverYouWantToWrite OutputFile
-    # convert -size 32x32 xc:white "${ROOTARGUSDIR}/${FSDIR}/${SUBDIR}/${FILENAME}"
-    convert -background white -fill black -pointsize 72 label:dummy_file "${ROOTARGUSDIR}/${FSDIR}/${SUBDIR}/${FILENAME}"
+    # convert -size 32x32 xc:white "${ROOTIMAGESDIR}/${FSDIR}/${SUBDIR}/${FILENAME}"
+    convert -background white -fill black -pointsize 72 label:dummy_file "${ROOTIMAGESDIR}/${FSDIR}/${SUBDIR}/${FILENAME}"
     result=$?
     if [ "${result}" -eq 1 ]
     then
-      echo "Error when trying to create an image file (${ROOTARGUSDIR}/${FSDIR}/${SUBDIR}/$FILENAME)"
+      echo "Error when trying to create an image file (${ROOTIMAGESDIR}/${FSDIR}/${SUBDIR}/$FILENAME)"
       exit
     fi
   done
   echo "Results:"
-  ls -al "${ROOTARGUSDIR}/${FSDIR}/${SUBDIR}"/*
+  ls -al "${ROOTIMAGESDIR}/${FSDIR}/${SUBDIR}"/*
 fi
