@@ -28,7 +28,7 @@
 
 - name: copy required matlab installer
   become: yes
-  unarchive: src={{ matlab_installer }} dest=/root/matlab creates=/root/matlab/install
+  unarchive: src={{ matlab_downloads_dir }}/{{ matlab_installer }} dest=/root/matlab creates=/root/matlab/install
   when:
 
 - name: copy required matlab components
