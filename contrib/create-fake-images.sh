@@ -21,8 +21,6 @@
 # You can use MYIMAGESDIR to relocate the $ROOTIMAGESDIR root directory
 
 
-# define variables
-ROOTIMAGESDIR="$MYIMAGESDIR/"
 # FS means fieldstation
 FSDIR="images"
 YEARNUMBER="$(date +%Y)"
@@ -40,6 +38,12 @@ if [ "${CONVERTFOUND}" -eq 1 ]
 then
   echo "ERROR: This script needs the 'convert' program from the ImageMagick package but it was not found!"
   exit
+fi
+
+if [ -z "$ROOTIMAGESDIR" ]
+then
+  echo "Environment variable ROOTIMAGESDIR is undefined!"
+  exit 1
 fi
 
 # Check if necessary dirs exist
