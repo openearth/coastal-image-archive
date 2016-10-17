@@ -7,9 +7,9 @@
 # Script to generate dummy files to test the working of the Archive server for coastal images
 #
 # Example of input files:
-# Source files are located on the fieldstation in /argus/images/<dir>
+# Source files are located on the fieldstation in /$ROOTIMAGESDIR/images/<dir>
 # The format of <dir> is year in 4 digits, <dot> daynumber <dot> month+day concattenated in 4 characters.
-# Example: /argus/images/2016.277.1003/1475518499.c6.snap.jpg
+# Example: /$ROOTIMAGESDIR/images/2016.277.1003/1475518499.c6.snap.jpg
 # Format description:
 # Original short format: 1476099002.c8.snap.jpg meaning: <epoch time>.c<camera #>.<image type: snap|timex|min|max>.jpg
 # Should be converted when copying to Long format: <epoch time>.<weekday>.<month>.<day>_<hour>_<min>_<sec>.UTC.<year>.<station>.c<camera #>.< image type: snap|timex|min|max>.jpg
@@ -18,11 +18,11 @@
 # as in:$ convert -size 32x32 xc:white empty.jpg
 
 # ENVIRONMENT VARIABLE(S):
-# You can use MYIMAGESDIR to relocate the argus root directory
+# You can use MYIMAGESDIR to relocate the $ROOTIMAGESDIR root directory
 
 
 # define variables
-ROOTIMAGESDIR="$MYIMAGESDIR/argus"
+ROOTIMAGESDIR="$MYIMAGESDIR/"
 # FS means fieldstation
 FSDIR="images"
 YEARNUMBER="$(date +%Y)"
