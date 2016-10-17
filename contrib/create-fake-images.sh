@@ -15,10 +15,9 @@
 # Should be converted when copying to Long format: <epoch time>.<weekday>.<month>.<day>_<hour>_<min>_<sec>.UTC.<year>.<station>.c<camera #>.< image type: snap|timex|min|max>.jpg
 
 # We will use ImageMagick to create dummy files
-# as in:$ convert -size 32x32 xc:white empty.jpg
 
 # ENVIRONMENT VARIABLE(S):
-# You can use MYIMAGESDIR to relocate the $ROOTIMAGESDIR root directory
+# You must use ROOTIMAGESDIR to define the location of the images root directory
 
 
 # FS means fieldstation

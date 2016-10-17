@@ -4,7 +4,7 @@ This directory contains add-ons and utility scripts
 
 * create-fake-images.sh  Script to create some dummy FieldStation jpg files. No
   commandline arguments. Checks first for existence of needed directories. You
-  can define an environment variable MYARGUSDIR to relocate the root if this
+  need to define an environment variable ROOTIMAGESDIR to define the root if this
   file hierarchy for testing purposes.
 
 
