@@ -118,10 +118,8 @@ else
   for camera in $CAMERAS
   do 
     FILENAME="${EPOCHTIME}.c${camera}.${IMAGETYPE}.jpg"
-    # convert -size 32x32 xc:white empty.jpg
-    # convert -background white -fill black -pointsize 72 label:WhateverYouWantToWrite OutputFile
-    # convert -size 32x32 xc:white "${ROOTIMAGESDIR}/${FSDIR}/${SUBDIR}/${FILENAME}"
-    convert -background white -fill black -pointsize 72 label:dummy_file "${ROOTIMAGESDIR}/${FSDIR}/${SUBDIR}/${FILENAME}"
+    # convert  xc:#ff0000   -pointsize 22     -fill black -gravity center     -draw "text 0,0 'TESTTEXT'" test.jpg
+    convert  xc:#ff0000   -pointsize 22     -fill black -gravity center     -draw "text 0,0 'Dummy file'"  "${ROOTIMAGESDIR}/${FSDIR}/${SUBDIR}/${FILENAME}"
     result=$?
     if [ "${result}" -eq 1 ]
     then
