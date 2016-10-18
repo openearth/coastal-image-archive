@@ -7,7 +7,7 @@
 - name: upgrade local environment
   become: yes
   yum:  name=*
-        update_cache=yes
+        update_cache=no
         state=latest
 
 - name: set time to utc

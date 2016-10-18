@@ -1,7 +1,9 @@
 ---
 # Global configuration
 - name: apply common configuration to all nodes
-  hosts: vagrant-local
+  hosts: all
 
   roles:
     - { role: common, tags: 'common'}
+    - { role: dim, tags: 'dim'}
+
