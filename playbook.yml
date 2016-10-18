@@ -1,9 +1,11 @@
 ---
 # Global configuration
 - name: apply common configuration to all nodes
-  hosts: vagrant-local
+  hosts: all
 
   roles:
     - { role: common, tags: 'common'}
     - { role: matlab, tags: 'matlab'}
     - { role: docker, tags: 'docker'}
+    - { role: dim, tags: 'dim'}
+
