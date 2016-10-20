@@ -14,10 +14,6 @@
   become: yes
   file: src=/usr/share/zoneinfo/UTC dest=/etc/localtime state=link force=yes
 
-- name: set hostname
-  become: yes
-  command: hostnamectl set-hostname {{ inventory_hostname }} --static
-
 - name: install essential stuff
   become: yes
   yum:  name={{ item }}
