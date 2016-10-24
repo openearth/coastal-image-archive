@@ -1,14 +1,14 @@
 ---
   - name: Copy needed Perl files to server
     copy:
-       src=  {{ perl_download_dir }}/{{ item }}
-       dest= /tmp/{{ item }}
+       src={{ perl_download_dir }}/{{ item }}
+       dest=/tmp/{{ item }}
     with_items:  '{{ perl_modules }}'
 
   - name: Copy needed Dim file to server
     copy:
-       src=  {{ perl_download_dir }}/{{ dim_package }}
-       dest= /tmp/{{ dim_package }}
+       src={{ perl_download_dir }}/{{ dim_package }}
+       dest=/tmp/{{ dim_package }}
 
 
   - name: Install packages on server.
@@ -18,11 +18,51 @@
        state=present
     with_items: '{{ perl_modules }}'
 
+  - name: Install perl-Net-SFTP-Foreign  package on server.
+    become: yes
+    yum:
+       name=perl-Net-SFTP-Foreign 
+       state=present
+
+
   - name: Install Dim package on server.
     become: yes
     yum:
-       name={{ dim_package }}
+       name=/tmp/{{ dim_package }}
        state=present
+
+  - name: Install mariaDB package on server.
+    become: yes
+    yum:
+       name=mariadb-server
+       state=present
+
+  - name: Install MySQL-python package on server.
+    become: yes
+    yum:
+       name=MySQL-python
+       state=present
+
+
+  - name: make sure MySQL/MariaDB is started on 
+    become: yes
+    service:  name=mariadb
+              state=started
+#              enabled=yes
+
+  - name: Create a new database with name 'dim'
+    become: yes
+    mysql_db: name=dim state=present
+
+  - name:  Create database user with name 'dim' and password 'dim' with all database privileges on database dim
+    become: yes
+    mysql_user: name=dim password=dim priv=dim.*:ALL state=present
+
+
+  - name:  Import database dump file to database 'dim'
+    become: yes
+    mysql_db: name=dim state=import target=/opt/dim/tools/database/mysql/create_tables.sql
+
  
 
 #  - name: make sure dim is started on boot
