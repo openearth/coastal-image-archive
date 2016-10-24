@@ -80,7 +80,7 @@ CAMERA=${FILEARRAY[1]}
 IMAGETYPE=${FILEARRAY[2]}
 
 # Split epochtime in components to insert into string
-DATESTRINGPART=$(date -d @${EPOCHTIME} "+%w.%m.%d_%H_%M_%S.UTC.%Y")
+DATESTRINGPART=$(date -d @${EPOCHTIME} "+%a.%m.%d_%H_%M_%S.UTC.%Y")
 
 # <epoch time>.<weekday>.<month>.<day>_<hour>_<min>_<sec>.UTC.<year>.<station>.c<camera #>.< image type: snap|timex|min|max>.jpg
 NEWFILENAME="${FILEARRAY[0]}.${DATESTRINGPART}.${STATION}.${CAMERA}.${IMAGETYPE}.jpg"
