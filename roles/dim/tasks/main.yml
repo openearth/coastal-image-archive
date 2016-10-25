@@ -1,81 +1,92 @@
 ---
-  - name: Copy needed Perl files to server
-    copy:
-       src={{ perl_download_dir }}/{{ item }}
-       dest=/tmp/{{ item }}
-    with_items:  '{{ perl_modules }}'
+- name: Copy needed Perl files to server
+  copy:
+     src={{ dim_downloads_dir }}/{{ item }}
+     dest=/tmp/{{ item }}
+  with_items: perl_modules
 
-  - name: Copy needed Dim file to server
-    copy:
-       src={{ perl_download_dir }}/{{ dim_package }}
-       dest=/tmp/{{ dim_package }}
+- name: Copy needed Dim file to server
+  copy:
+     src={{ dim_downloads_dir }}/{{ dim_package }}
+     dest=/tmp/{{ dim_package }}
 
+- name: Install packages on server.
+  become: yes
+  yum:
+     name=/tmp/{{ item }}
+     state=present
+  with_items: perl_modules
 
-  - name: Install packages on server.
-    become: yes
-    yum:
-       name=/tmp/{{ item }}
-       state=present
-    with_items: '{{ perl_modules }}'
+- name: Install perl-Net-SFTP-Foreign package on server.
+  become: yes
+  yum:
+     name=perl-Net-SFTP-Foreign
+     state=present
 
-  - name: Install perl-Net-SFTP-Foreign  package on server.
-    become: yes
-    yum:
-       name=perl-Net-SFTP-Foreign 
-       state=present
+- name: Install Dim package on server.
+  become: yes
+  yum:
+     name=/tmp/{{ dim_package }}
+     state=present
 
+- name: Install mariaDB package on server.
+  become: yes
+  yum:
+     name=mariadb-server
+     state=present
 
-  - name: Install Dim package on server.
-    become: yes
-    yum:
-       name=/tmp/{{ dim_package }}
-       state=present
+- name: Install MySQL-python package on server.
+  become: yes
+  yum:
+     name=MySQL-python
+     state=present
 
-  - name: Install mariaDB package on server.
-    become: yes
-    yum:
-       name=mariadb-server
-       state=present
-
-  - name: Install MySQL-python package on server.
-    become: yes
-    yum:
-       name=MySQL-python
-       state=present
-
-
-  - name: make sure MySQL/MariaDB is started on 
-    become: yes
-    service:  name=mariadb
-              state=started
+- name: make sure MySQL/MariaDB is started on
+  become: yes
+  service:  name=mariadb
+            state=started
 #              enabled=yes
 
-  - name: Create a new database with name 'dim'
-    become: yes
-    mysql_db: name=dim state=present
+- name: Create a new database
+  become: yes
+  mysql_db: name={{ dim_database_name }} state=present
+  register: db_created
 
-  - name:  Create database user with name 'dim' and password 'dim' with all database privileges on database dim
-    become: yes
-    mysql_user: name=dim password=dim priv=dim.*:ALL state=present
+- name:  Create database user with all database privileges on database dim
+  become: yes
+  mysql_user: name={{ dim_database_user }} password={{ dim_database_passwd }} priv=dim.*:ALL state=present
+  when: db_created.changed
 
+- name:  Import database dump file to database
+  become: yes
+  mysql_db: name={{ dim_database_name }} state=import target=/opt/dim/tools/database/mysql/create_tables.sql
+  when: db_created.changed
 
-  - name:  Import database dump file to database 'dim'
-    become: yes
-    mysql_db: name=dim state=import target=/opt/dim/tools/database/mysql/create_tables.sql
+- name: create dim directory
+  become: yes
+  file: path={{ dim_config_dir }} state=directory owner=dim group=dim
 
- 
+- name: configure dim
+  become: yes
+  become_user: dim
+  template: src=dim_config.xml.j2 dest={{ dim_config_dir }}/dim_config.xml
 
-#  - name: make sure dim is started on boot
-#    become: yes
-#    service:  name=httpd
-#              state=started
-#              enabled=yes
-#    tags:
-#      - service
+- name: create directory
+  become: yes
+  file: path={{ dim_config_dir }}/datasets state=directory owner=dim group=dim
 
-#    become: yes
-#    service:  name=httpd
-#              state=started
-#              enabled=yes
-#    tags:
-#      - service
+- name: configure dim datasets
+  become: yes
+  become_user: dim
+  template: src=dataset.xml.j2 dest={{ dim_config_dir }}/datasets/dataset_{{ item }}.xml
+  with_items: dim_datasets
+
+- name: create directory
+  become: yes
+  file: path={{ dim_config_dir }}/sites state=directory owner=dim group=dim
+
+- name: configure dim sites
+  become: yes
+  become_user: dim
+  template: src=site.xml.j2 dest={{ dim_config_dir }}/sites/site_{{ item }}.xml
+  with_items: dim_sites
