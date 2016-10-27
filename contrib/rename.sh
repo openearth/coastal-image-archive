@@ -54,8 +54,8 @@ fi
 # Check that destination directory exists
 if [ ! -d $2 ]
 then
-  echo "FATAL: No destiniation directory found."
-  logger "FATAL: No destiniation directory found."
+  echo "FATAL: No destination directory found."
+  logger "FATAL: No destination directory found."
   usage
   exit
 fi
