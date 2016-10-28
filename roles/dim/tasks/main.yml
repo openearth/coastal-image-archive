@@ -78,8 +78,8 @@
 - name: configure dim datasets
   become: yes
   become_user: dim
-  template: src=dataset.xml.j2 dest={{ dim_config_dir }}/datasets/dataset_{{ item }}.xml
-  with_items: dim_datasets
+  template: src=datasets.xml.j2 dest={{ dim_config_dir }}/datasets/datasets_{{ item.id }}.xml
+  with_items: dim_sites # datasets are (nested) item in dim_sites variable
 
 - name: create directory
   become: yes
@@ -88,5 +88,21 @@
 - name: configure dim sites
   become: yes
   become_user: dim
-  template: src=site.xml.j2 dest={{ dim_config_dir }}/sites/site_{{ item }}.xml
+  template: src=site.xml.j2 dest={{ dim_config_dir }}/sites/site_{{ item.id }}.xml
+  with_items: dim_sites
+
+- name: copy rename.sh
+  become: yes
+  become_user: dim
+  copy:
+     src=contrib/rename.sh
+     dest={{ dim_config_dir }}/rename.sh
+
+- name: create target directory
+  become: yes
+  file: path={{ dim_target_directory }} state=directory owner=dim group=dim
+
+- name: create target directories
+  become: yes
+  file: path={{ dim_target_directory }}/{{ item.id }} state=directory owner=dim group=dim
   with_items: dim_sites

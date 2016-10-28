@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dimConfigurationPart xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="/opt/dim/etc/schema/dimConfiguration.xsd">
+{% for dataset in item.datasets %}
+    <dataset id="{{ item.id }}_{{ dataset.id }}">
+        <workDirectory>${workDirectory}/${dataset@id}</workDirectory>
+        <cronentry>*/10 * * * *</cronentry> 
+        <cleanup active="true">
+            <period>86400</period>
+        </cleanup>
+        <source id="{{ item.id }}">
+            <site ref="{{ item.id }}"/>
+            <remoteDirectory>{{ dim_source_directory }}</remoteDirectory>
+            <includePattern>*</includePattern>
+            <recursive>false</recursive>
+            <cleanup>false</cleanup>
+        </source>
+        <targets id="01-{{ dataset.id }}">
+            <recursive>false</recursive>
+            <actions id="01-rename">
+                <action id="01-rename">
+                    <command>
+                       <executable>/bin/bash /home/dim/rename.sh</executable>
+                       <arguments>%ABSOLUTE_FILE_PATH% {{ dim_target_directory }}/{{ item.id }} {{ item.id }}</arguments>
+                    </command>
+                </action>
+            </actions>
+            <target active="true" id="01-backup">
+                <localDirectory>/home/dim/data/databackup/dim-{{ item.id }}/%DATEPATTERN%/${dataset@id}</localDirectory>
+                <datePattern>%Y-%m-%d</datePattern>
+            </target>
+        </targets>
+    </dataset>
+{% endfor %}
+</dimConfigurationPart>
