@@ -1,4 +1,9 @@
 ---
+- name: include confidential source_vars.yml file
+  include_vars: source_vars.yml
+  register: source_vars_included
+  ignore_errors: True
+
 - name: Copy needed Perl files to server
   copy:
      src={{ dim_downloads_dir }}/{{ item }}
@@ -80,6 +85,7 @@
   become_user: dim
   template: src=datasets.xml.j2 dest={{ dim_config_dir }}/datasets/datasets_{{ item.id }}.xml
   with_items: dim_sites # datasets are (nested) item in dim_sites variable
+  when: source_vars_included.changed
 
 - name: create directory
   become: yes
@@ -90,6 +96,7 @@
   become_user: dim
   template: src=site.xml.j2 dest={{ dim_config_dir }}/sites/site_{{ item.id }}.xml
   with_items: dim_sites
+  when: source_vars_included.changed
 
 - name: copy rename.sh
   become: yes
@@ -106,3 +113,4 @@
   become: yes
   file: path={{ dim_target_directory }}/{{ item.id }} state=directory owner=dim group=dim
   with_items: dim_sites
+  when: source_vars_included.changed
