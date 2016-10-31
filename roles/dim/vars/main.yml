@@ -28,3 +28,4 @@ dim_database_host: localhost
 dim_database_name: dim
 dim_database_user: dim
 dim_config_dir: /home/dim
+dim_target_directory: /sites

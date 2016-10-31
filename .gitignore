@@ -1,0 +1,16 @@
+# Vagrant
+.vagrant/
+*.retry
+
+# Pycharm
+.idea/
+.editorconfig
+
+# Mac files:
+.DS_Store
+
+# Ansible host var files
+host_vars/*
+
+# dim vars
+roles/dim/vars/source_vars.yml
