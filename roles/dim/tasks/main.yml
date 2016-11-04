@@ -4,53 +4,54 @@
   register: source_vars_included
   ignore_errors: True
 
-- name: Copy needed Perl files to server
+- name: Copy Perl module packages to server
   copy:
-     src={{ dim_downloads_dir }}/{{ item }}
-     dest=/tmp/{{ item }}
+    src={{ dim_downloads_dir }}/{{ item }}
+    dest=/tmp/{{ item }}
   with_items: "{{ perl_modules }}"
 
-- name: Copy needed Dim file to server
+- name: Copy Dim package to server
   copy:
-     src={{ dim_downloads_dir }}/{{ dim_package }}
-     dest=/tmp/{{ dim_package }}
+    src={{ dim_downloads_dir }}/{{ dim_package }}
+    dest=/tmp/{{ dim_package }}
 
-- name: Install packages on server.
+- name: Install perl module packages
   become: yes
   yum:
-     name=/tmp/{{ item }}
-     state=present
+    name=/tmp/{{ item }}
+    state=present
   with_items: "{{ perl_modules }}"
 
-- name: Install perl-Net-SFTP-Foreign package on server.
+- name: Install perl-Net-SFTP-Foreign package on server
   become: yes
   yum:
-     name=perl-Net-SFTP-Foreign
-     state=present
+    name=perl-Net-SFTP-Foreign
+    state=present
 
-- name: Install Dim package on server.
+- name: Install Dim package on server
   become: yes
   yum:
-     name=/tmp/{{ dim_package }}
-     state=present
+    name=/tmp/{{ dim_package }}
+    state=present
 
-- name: Install mariaDB package on server.
+- name: Install mariaDB package on server
   become: yes
   yum:
-     name=mariadb-server
-     state=present
+    name=mariadb-server
+    state=present
 
-- name: Install MySQL-python package on server.
+- name: Install MySQL-python package on server
   become: yes
   yum:
-     name=MySQL-python
-     state=present
+    name=MySQL-python
+    state=present
 
-- name: make sure MySQL/MariaDB is started on
+- name: make sure MySQL/MariaDB is started on boot
   become: yes
-  service:  name=mariadb
-            state=started
-#              enabled=yes
+  service:
+    name=mariadb
+    state=started
+    enabled=yes
 
 - name: Create a new database
   become: yes
@@ -123,6 +124,10 @@
 
 - name: create target directories
   become: yes
-  file: path={{ dim_target_directory }}/{{ item.id }} state=directory owner=dim group=dim
+  file:
+    path={{ dim_target_directory }}/{{ item.id }}
+    state=directory
+    owner=dim
+    group=dim
   with_items: "{{ dim_sites }}"
   when: source_vars_included.changed
