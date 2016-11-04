@@ -34,25 +34,6 @@
     name=/tmp/{{ dim_package }}
     state=present
 
-- name: Install mariaDB package on server
-  become: yes
-  yum:
-    name=mariadb-server
-    state=present
-
-- name: Install MySQL-python package on server
-  become: yes
-  yum:
-    name=MySQL-python
-    state=present
-
-- name: make sure MySQL/MariaDB is started on boot
-  become: yes
-  service:
-    name=mariadb
-    state=started
-    enabled=yes
-
 - name: Create a new database
   become: yes
   mysql_db:
