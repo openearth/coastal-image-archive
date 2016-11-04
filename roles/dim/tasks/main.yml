@@ -8,7 +8,7 @@
   copy:
      src={{ dim_downloads_dir }}/{{ item }}
      dest=/tmp/{{ item }}
-  with_items: perl_modules
+  with_items: "{{ perl_modules }}"
 
 - name: Copy needed Dim file to server
   copy:
@@ -20,7 +20,7 @@
   yum:
      name=/tmp/{{ item }}
      state=present
-  with_items: perl_modules
+  with_items: "{{ perl_modules }}"
 
 - name: Install perl-Net-SFTP-Foreign package on server.
   become: yes
@@ -54,48 +54,64 @@
 
 - name: Create a new database
   become: yes
-  mysql_db: name={{ dim_database_name }} state=present
+  mysql_db:
+    name={{ dim_database_name }}
+    state=present
   register: db_created
 
 - name:  Create database user with all database privileges on database dim
   become: yes
-  mysql_user: name={{ dim_database_user }} password={{ dim_database_passwd }} priv=dim.*:ALL state=present
+  mysql_user:
+    name={{ dim_database_user }}
+    password={{ dim_database_passwd }}
+    priv=dim.*:ALL
+    state=present
   when: db_created.changed
 
 - name:  Import database dump file to database
   become: yes
-  mysql_db: name={{ dim_database_name }} state=import target=/opt/dim/tools/database/mysql/create_tables.sql
+  mysql_db:
+    name={{ dim_database_name }}
+    state=import
+    target=/opt/dim/tools/database/mysql/create_tables.sql
   when: db_created.changed
 
-- name: create dim directory
+- name: create dim directories
   become: yes
-  file: path={{ dim_config_dir }} state=directory owner=dim group=dim
+  file:
+    path={{ item }}
+    state=directory
+    owner=dim
+    group=dim
+  with_items:
+    - "{{ dim_config_dir }}"
+    - "{{ dim_config_dir }}/datasets"
+    - "{{ dim_config_dir }}/sites"
+    - "{{ dim_target_directory }}"
 
 - name: configure dim
   become: yes
   become_user: dim
-  template: src=dim_config.xml.j2 dest={{ dim_config_dir }}/dim_config.xml
-
-- name: create directory
-  become: yes
-  file: path={{ dim_config_dir }}/datasets state=directory owner=dim group=dim
+  template:
+    src=dim_config.xml.j2
+    dest={{ dim_config_dir }}/dim_config.xml
 
 - name: configure dim datasets
   become: yes
   become_user: dim
-  template: src=datasets.xml.j2 dest={{ dim_config_dir }}/datasets/datasets_{{ item.id }}.xml
-  with_items: dim_sites # datasets are (nested) item in dim_sites variable
+  template:
+    src=datasets.xml.j2
+    dest={{ dim_config_dir }}/datasets/datasets_{{ item.id }}.xml
+  with_items: "{{ dim_sites }}" # datasets are (nested) item in dim_sites variable
   when: source_vars_included.changed
-
-- name: create directory
-  become: yes
-  file: path={{ dim_config_dir }}/sites state=directory owner=dim group=dim
 
 - name: configure dim sites
   become: yes
   become_user: dim
-  template: src=site.xml.j2 dest={{ dim_config_dir }}/sites/site_{{ item.id }}.xml
-  with_items: dim_sites
+  template:
+    src=site.xml.j2
+    dest={{ dim_config_dir }}/sites/site_{{ item.id }}.xml
+  with_items: "{{ dim_sites }}"
   when: source_vars_included.changed
 
 - name: copy rename.sh
@@ -105,12 +121,8 @@
      src=contrib/rename.sh
      dest={{ dim_config_dir }}/rename.sh
 
-- name: create target directory
-  become: yes
-  file: path={{ dim_target_directory }} state=directory owner=dim group=dim
-
 - name: create target directories
   become: yes
   file: path={{ dim_target_directory }}/{{ item.id }} state=directory owner=dim group=dim
-  with_items: dim_sites
+  with_items: "{{ dim_sites }}"
   when: source_vars_included.changed
