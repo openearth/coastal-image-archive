@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dimConfigurationPart xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="/opt/dim/etc/schema/dimConfiguration.xsd">
+    <site id="{{ item.id }}" active="{{ item.active | default('true') }}">
+        <sftp>
+            <hostname>{{ item.hostname }}</hostname>
+            <username>{{ item.username }}</username>
+            <password>{{ item.password }}</password>
+        </sftp>
+    </site>
+</dimConfigurationPart>
