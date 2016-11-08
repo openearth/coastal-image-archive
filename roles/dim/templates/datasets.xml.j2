@@ -10,7 +10,7 @@
         <source id="{{ item.id }}">
             <site ref="{{ item.id }}"/>
             <remoteDirectory>{{ dim_source_directory }}</remoteDirectory>
-            <includePattern>*</includePattern>
+            <includePattern>*.jpg</includePattern>
             <recursive>false</recursive>
             <cleanup>false</cleanup>
         </source>
@@ -25,8 +25,7 @@
                 </action>
             </actions>
             <target active="true" id="01-backup">
-                <localDirectory>/home/dim/data/databackup/dim-{{ item.id }}/%DATEPATTERN%/${dataset@id}</localDirectory>
-                <datePattern>%Y-%m-%d</datePattern>
+                <localDirectory>/data/</localDirectory>
             </target>
         </targets>
     </dataset>
