@@ -12,7 +12,7 @@
 # Should be converted to Long format: <epoch time>.<weekday>.<month>.<day>_<hour>_<min>_<sec>.UTC.<year>.<station>.c<camera #>.< image type: snap|timex|min|max>.jpg
 # <epoch time>.<weekday>.<month>.<day>_<hour>_<min>_<sec>.UTC.<year>.<station>.c<camera #>.< image type: snap|timex|min|max>.jpg
 # 
-# Files are located on the fieldstation in /argus/images/<dir>
+# Files are located on the fieldstation in /somedir/images/<dir>
 # 
 # The format of <dir> is year in 4 digits, <dot> daynumber <dot> month+day concattenated in 4 characters.
 #
@@ -23,6 +23,7 @@
 
 # Example name of imported image:
 # /home/dim/data/dim-work/ZANDMOTOR/20161021-094419-GMT/fromSource/zandmotor/images/2016.291.1017/1476690829.c2.snap.jpg
+
 
 function usage {
   echo "This script renames files."
@@ -79,16 +80,27 @@ EPOCHTIME=${FILEARRAY[0]}
 CAMERA=${FILEARRAY[1]}
 IMAGETYPE=${FILEARRAY[2]}
 
-# Split epochtime in components to insert into string
+# Split epochtime in components to insert into string for filename
 DATESTRINGPART=$(date -d @${EPOCHTIME} "+%a.%m.%d_%H_%M_%S.UTC.%Y")
 
 # <epoch time>.<weekday>.<month>.<day>_<hour>_<min>_<sec>.UTC.<year>.<station>.c<camera #>.< image type: snap|timex|min|max>.jpg
 NEWFILENAME="${FILEARRAY[0]}.${DATESTRINGPART}.${STATION}.${CAMERA}.${IMAGETYPE}.jpg"
 
-echo "Moving ${FILENAME} to ${NEWFILENAME}"
-logger "Moving ${FILENAME} to ${NEWFILENAME}"
 
-mv  ${SOURCEFILE} $2/${NEWFILENAME}
+# Split epochtime in components to insert into string for first part of directory structure
+STRINGPART1=$(date -d @${EPOCHTIME} "+%Y")
+
+# Split epochtime in components to insert into string for second part of directory structure
+STRINGPART2=$(date -d @${EPOCHTIME} "+%j_%m.%d")
+
+DESTINATIONDIR="$2/${STATION}/${STRINGPART1}/${CAMERA}/${STRINGPART2}/"
+
+mkdir -p "${DESTINATIONDIR}"
+
+echo "Moving ${SOURCEFILE} to ${DESTINATIONDIR}/${NEWFILENAME}"
+logger "Moving ${SOURCEFILE} to ${DESTINATIONDIR}/${NEWFILENAME}"
+
+mv  "${SOURCEFILE}"   "${DESTINATIONDIR}/${NEWFILENAME}"
 
 # Done
 
