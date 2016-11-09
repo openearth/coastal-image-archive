@@ -9,6 +9,13 @@
     - httpd
     - mod_wsgi
 
+- name: Install configuration to access /data directory using the /sites url
+  become: yes
+  copy:
+     src=files/images.conf
+     dest=/etc/httpd/conf.d/images.conf
+
+
 - name: make sure apache is started on boot
   become: yes
   service:  name=httpd
