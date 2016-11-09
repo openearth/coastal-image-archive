@@ -6,7 +6,7 @@
 
 - name: Copy Perl module packages to server
   copy:
-    src={{ perl_downloads_dir }}/{{ item }}
+    src={{ dim_downloads_dir }}/{{ item }}
     dest=/tmp/{{ item }}
   with_items: "{{ perl_modules }}"
 
