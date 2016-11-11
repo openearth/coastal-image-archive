@@ -2,9 +2,10 @@
 #
 # Script to rename the imported images
 #
-# Version: 1.0
-# Date: 2016-10-24
-# Author: J. Baten
+# Changelog
+# Version  Date        Author    Remarks
+# 1.0      2016-10-24  J. Baten  Initial version
+# 1.1      2016-11-11  J. Baten  Added SQL insert into database, Added dayminute column calculation, corrected handling of camera number
 #
 # The renaming of the files is as follows:
 # Original short format: 1476099002.c8.snap.jpg meaning: 
@@ -77,7 +78,7 @@ echo "Filename found : ${FILENAME}"
 IFS='.' read -r -a FILEARRAY <<< "${FILENAME}"
 
 EPOCHTIME=${FILEARRAY[0]}
-CAMERA=${FILEARRAY[1]}
+CAMERA=${FILEARRAY[1]} 
 IMAGETYPE=${FILEARRAY[2]}
 
 # Split epochtime in components to insert into string for filename
@@ -95,12 +96,51 @@ STRINGPART2=$(date -d @${EPOCHTIME} "+%j_%m.%d")
 
 DESTINATIONDIR="$2/${STATION}/${STRINGPART1}/${CAMERA}/${STRINGPART2}/"
 
+# Calculate amount of minutes since midnight
+SECONDS=$(date -d @${EPOCHTIME} +%s)
+SECONDS_MIDNIGHT=$(date  +%s -d "$(date -d @${EPOCHTIME} +%Y-%m-%d) 00:00:00" )
+MINUTES_SINCE_MIDNIGHT=$(((SECONDS - SECONDS_MIDNIGHT) / 60))
+
 mkdir -p "${DESTINATIONDIR}"
 
 echo "Moving ${SOURCEFILE} to ${DESTINATIONDIR}/${NEWFILENAME}"
 logger "Moving ${SOURCEFILE} to ${DESTINATIONDIR}/${NEWFILENAME}"
 
 mv  "${SOURCEFILE}"   "${DESTINATIONDIR}/${NEWFILENAME}"
+ret=$?
+if [ "$ret" -eq 0 ]
+then
+  # move was succesfull. Let's add this info to the Images database
+  # MariaDB [SiteImages]> select * from Images limit 1;
+  # +------------------------------------------------------------------------------------+------+------------+--------+-------+-----------+
+  # | location                                                                           | site | epoch      | camera | type  | dayminute |
+  # +------------------------------------------------------------------------------------+------+------------+--------+-------+-----------+
+  # | /sete/2011/c1/103_Apr.13/1302694201.Wed.Apr.13_11_30_01.UTC.2011.sete.c1.snap.jpg  | sete | 1302694201 |      1 | snap  |       690 |
+  # +------------------------------------------------------------------------------------+------+------------+--------+-------+-----------+
+
+  DBUSER="root"
+  DATABASE="SiteImages"
+  DBTABLE="Images"
+
+  # NOTE: Remove first character from camera as that is a 'c' and needs to go to store value in sql int column.
+  SQLCAMERA="${CAMERA:1}"
+
+  # Build SQL query string
+  SQL="INSERT INTO ${DBTABLE} (location,site,epoch,camera,type,dayminute) "
+  SQL="${SQL} VALUES (\"${DESTINATIONDIR}/${NEWFILENAME}\",\"${STATION}\",\"${EPOCHTIME}\",\"${SQLCAMERA}\",\"${IMAGETYPE}\",\"${MINUTES_SINCE_MIDNIGHT}\" ) "
+
+  RESULT=$( mysql -h localhost -u "${DBUSER}"  --database="${DATABASE}" -e "${SQL}" 2>&1 )
+
+  ret=$?
+  if [ "$ret" -ne 0 ]
+  then
+    logger "Rename.sh: ERROR: some error occured using SQL statement '${SQL}'\nThe error message was: ${RESULT}"
+  fi
+
+else
+  # move was not succesfull. Let's tell someone
+  logger "Last move of ${SOURCEFILE} to ${DESTINATIONDIR}/${NEWFILENAME} was NOT succesfull"
+fi
 
 # Done
 
