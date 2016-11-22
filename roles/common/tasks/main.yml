@@ -21,7 +21,7 @@
 - name: create functional user
   become: yes
   user: name={{ item.name }} comment={{ item.comment }} shell=/bin/bash state=present
-  with_items: '{{ users }}
+  with_items: '{{ users }}'
 
 - name: install essential stuff
   become: yes
