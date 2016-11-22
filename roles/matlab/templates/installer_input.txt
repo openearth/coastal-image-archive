@@ -40,7 +40,7 @@
 ## Set the desired value for destinationFolder and 
 ## uncomment the line. 
 
-destinationFolder=/opt/matlab
+destinationFolder={{ matlab_destination_path }}
 
 ##
 ## SPECIFY FILE INSTALLATION KEY 
@@ -50,7 +50,7 @@ destinationFolder=/opt/matlab
 ## Set the desired value for fileInstallationKey and 
 ## uncomment the line.
 ##
-fileInstallationKey={{matlab_file_installation_key}}
+fileInstallationKey={{ matlab_file_installation_key }}
 
 ##
 ## ACCEPT LICENSE AGREEMENT  
@@ -131,7 +131,7 @@ mode=silent
 ## Set the desired value for licensePath and
 ## uncomment the line.
 
-licensePath=/opt/matlab/licenses/license.lic
+licensePath=/opt/matlab/licenses/{{ matlab_license_file }}
 
 ## CHOOSE TO INSTALL LICENSE MANAGER (For network license types only)
 ##

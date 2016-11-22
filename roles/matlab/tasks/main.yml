@@ -28,13 +28,13 @@
 
 - name: copy required matlab installer
   become: yes
-  unarchive: src={{ matlab_installer }} dest=/root/matlab creates=/root/matlab/install
+  unarchive: src={{ matlab_downloads_dir }}/{{ matlab_installer }} dest=/root/matlab creates=/root/matlab/install
   when:
 
 - name: copy required matlab components
   become: yes
   copy: src={{ matlab_downloads_dir }}/{{ item }} dest=/root/matlab/archives/{{ item }}
-  with_items: matlab_components
+  with_items: '{{ matlab_components }}'
 
 - name: copy keys for matlab files
   become: yes
@@ -45,10 +45,14 @@
   become: yes
   file: path=/opt/matlab/licenses/ state=directory
 
-- name: copy license.lic
+- name: copy matlab_license_file
   become: yes
-  copy: src={{ matlab_downloads_dir }}/{{ matlab_license }} dest=/opt/matlab/licenses/license.lic
+  copy: src={{ matlab_downloads_dir }}/{{ matlab_license_file }} dest=/opt/matlab/licenses/{{ matlab_license_file }}
 
 - name: install matlab
   become: yes
   command: /root/matlab/install -inputFile /root/matlab/installer_input.txt creates=/opt/matlab/bin/matlab
+
+- name: create functional user
+  become: yes
+  user: name=argus comment="functional user" shell=/bin/bash state=present
