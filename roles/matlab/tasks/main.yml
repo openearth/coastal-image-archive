@@ -52,7 +52,3 @@
 - name: install matlab
   become: yes
   command: /root/matlab/install -inputFile /root/matlab/installer_input.txt creates=/opt/matlab/bin/matlab
-
-- name: create functional user
-  become: yes
-  user: name=argus comment="functional user" shell=/bin/bash state=present
