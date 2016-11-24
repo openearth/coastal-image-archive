@@ -257,7 +257,7 @@ licensePath=/opt/matlab/licenses/{{ matlab_license_file }}
 #product.HDL_Verifier
 #product.IEC_Certification_Kit
 #product.Image_Acquisition_Toolbox
-#product.Image_Processing_Toolbox
+product.Image_Processing_Toolbox
 #product.Instrument_Control_Toolbox
 product.MATLAB
 #product.MATLAB_Builder_EX
@@ -273,7 +273,7 @@ product.MATLAB
 #product.Model_Based_Calibration_Toolbox
 #product.Neural_Network_Toolbox
 #product.OPC_Toolbox
-#product.Optimization_Toolbox
+product.Optimization_Toolbox
 #product.Parallel_Computing_Toolbox
 #product.Partial_Differential_Equation_Toolbox
 #product.Phased_Array_System_Toolbox
@@ -282,7 +282,7 @@ product.MATLAB
 #product.RF_Toolbox
 #product.Real_Time_Windows_Target
 #product.Robust_Control_Toolbox
-#product.Signal_Processing_Toolbox
+product.Signal_Processing_Toolbox
 #product.SimBiology
 #product.SimDriveline
 #product.SimElectronics
@@ -304,7 +304,7 @@ product.MATLAB
 #product.Simulink_Verification_and_Validation
 #product.Spreadsheet_Link_EX
 #product.Stateflow
-#product.Statistics_Toolbox
+product.Statistics_Toolbox
 #product.Symbolic_Math_Toolbox
 #product.System_Identification_Toolbox
 #product.SystemTest
