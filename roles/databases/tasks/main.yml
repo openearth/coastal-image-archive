@@ -21,3 +21,11 @@
     state=import
   with_items: "{{ database_dumps }}"
 
+- name: create mysql users
+  become: yes
+  mysql_user:
+    name={{ item.name }}
+    password={{ item.passwd }}
+    priv={{ item.priv }}
+    state=present
+  with_items: '{{ mysql_users }}'
