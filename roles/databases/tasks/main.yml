@@ -26,6 +26,7 @@
   mysql_user:
     name={{ item.name }}
     password={{ item.passwd }}
+    host={{ item.host }}
     priv={{ item.priv }}
     state=present
   with_items: '{{ mysql_users }}'
