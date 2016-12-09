@@ -133,7 +133,7 @@
   file:
     path: /opt/dim/bin/dim3_init
     state: touch
-    mode: 0774
+    mode: 0750
 
 - name: make dim3_init executable
   become: yes

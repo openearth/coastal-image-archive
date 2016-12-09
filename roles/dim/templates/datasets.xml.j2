@@ -19,7 +19,7 @@
             <actions id="01-rename">
                 <action id="01-rename">
                     <command>
-                       <executable>/bin/bash /home/dim/rename.sh</executable>
+                       <executable>/bin/bash {{ dim_config_dir }}/rename.sh</executable>
                        <arguments>%ABSOLUTE_FILE_PATH% {{ dim_target_directory }}/{{ item.id }} {{ item.id }}</arguments>
                     </command>
                 </action>
