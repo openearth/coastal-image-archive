@@ -3,7 +3,7 @@
 {% for dataset in item.datasets %}
     <dataset id="{{ item.id }}_{{ dataset.id }}">
         <workDirectory>${workDirectory}/${dataset@id}</workDirectory>
-        <cronentry>15,45 * * * *</cronentry>
+        <cronentry>*/5 * * * *</cronentry>
         <cleanup active="true">
             <period>86400</period>
         </cleanup>
@@ -19,7 +19,7 @@
             <actions id="01-rename">
                 <action id="01-rename">
                     <command>
-                       <executable>/bin/bash /home/dim/rename.sh</executable>
+                       <executable>/bin/bash {{ dim_config_dir }}/rename.sh</executable>
                        <arguments>%ABSOLUTE_FILE_PATH% {{ dim_target_directory }}/{{ item.id }} {{ item.id }}</arguments>
                     </command>
                 </action>
