@@ -66,10 +66,26 @@
     owner=dim
     group=dim
   with_items:
-    - "{{ dim_config_dir }}"
-    - "{{ dim_config_dir }}/datasets"
-    - "{{ dim_config_dir }}/sites"
     - "{{ dim_target_directory }}"
+    - "{{ dim_target_directory }}/dim"
+    - "{{ dim_target_directory }}/dim/data"
+    - "{{ dim_target_directory }}/dim/work"
+
+- name: create dim .ssh directory
+  become: yes
+  file:
+    path=/opt/dim/.ssh
+    state=directory
+    mode=700
+    owner=dim
+    group=dim
+
+- name: create .ssh/config
+  become: yes
+  become_user: dim
+  template:
+    src=ssh_config.j2
+    dest=/opt/dim/.ssh/config
 
 - name: configure dim
   become: yes
@@ -84,8 +100,8 @@
   template:
     src=datasets.xml.j2
     dest={{ dim_config_dir }}/datasets/datasets_{{ item.id }}.xml
+    backup=yes
   with_items: "{{ dim_sites }}" # datasets are (nested) item in dim_sites variable
-  when: source_vars_included.changed
 
 - name: configure dim sites
   become: yes
@@ -93,8 +109,8 @@
   template:
     src=site.xml.j2
     dest={{ dim_config_dir }}/sites/site_{{ item.id }}.xml
+    backup=yes
   with_items: "{{ dim_sites }}"
-  when: source_vars_included.changed
 
 - name: copy rename.sh
   become: yes
@@ -111,4 +127,28 @@
     owner=dim
     group=dim
   with_items: "{{ dim_sites }}"
-  when: source_vars_included.changed
+
+- name: make dim3_init executable
+  become: yes
+  file:
+    path: /opt/dim/bin/dim3_init
+    state: touch
+    mode: 0774
+
+- name: make dim3_init executable
+  become: yes
+  file:
+    path: /etc/systemd/system/dim3.service
+    state: touch
+    mode: 0664
+
+- name: systemctl daemon-reload
+  become: yes
+  command: systemctl daemon-reload
+  notify: restart dim
+
+- name: make sure dim is started on boot
+  become: yes
+  service:  name=dim3
+            state=started
+            enabled=yes

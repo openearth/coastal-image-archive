@@ -3,7 +3,7 @@
 {% for dataset in item.datasets %}
     <dataset id="{{ item.id }}_{{ dataset.id }}">
         <workDirectory>${workDirectory}/${dataset@id}</workDirectory>
-        <cronentry>*/10 * * * *</cronentry> 
+        <cronentry>15,45 * * * *</cronentry>
         <cleanup active="true">
             <period>86400</period>
         </cleanup>
