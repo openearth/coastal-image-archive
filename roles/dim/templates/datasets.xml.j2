@@ -3,15 +3,22 @@
 {% for dataset in item.datasets %}
     <dataset id="{{ item.id }}_{{ dataset.id }}">
         <workDirectory>${workDirectory}/${dataset@id}</workDirectory>
-        <cronentry>15,45 * * * *</cronentry>
+    {% if dataset.cronentry is defined %}
+        <cronentry>{{ dataset.cronentry }}</cronentry>
+    {% else %}
+        <cronentry>{{ dim_cronentry }}</cronentry>
+    {% endif %}
         <cleanup active="true">
-            <period>86400</period>
+            <period>{{ dim_cleanup_period }}</period>
         </cleanup>
         <source id="{{ item.id }}">
             <site ref="{{ item.id }}"/>
             <remoteDirectory>{{ dim_source_directory }}</remoteDirectory>
             <includePattern>*.jpg</includePattern>
             <recursive>false</recursive>
+        {% if item.maximum_file_age is defined %}
+            <maximumFileAge>{{ item.maximum_file_age }}</maximumFileAge>
+        {% endif %}
             <cleanup>false</cleanup>
         </source>
         <targets id="01-{{ dataset.id }}">
@@ -20,12 +27,12 @@
                 <action id="01-rename">
                     <command>
                        <executable>/bin/bash {{ dim_config_dir }}/rename.sh</executable>
-                       <arguments>%ABSOLUTE_FILE_PATH% {{ dim_target_directory }}/{{ item.id }} {{ item.id }}</arguments>
+                       <arguments>%SOURCE_DIRECTORY% %TARGET_DIRECTORY% {{ item.id }}</arguments>
                     </command>
                 </action>
             </actions>
             <target active="true" id="01-backup">
-                <localDirectory>/data/</localDirectory>
+                <localDirectory>{{ dim_target_directory }}</localDirectory>
             </target>
         </targets>
     </dataset>
