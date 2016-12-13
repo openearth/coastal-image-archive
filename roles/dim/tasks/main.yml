@@ -48,7 +48,6 @@
     password={{ dim_database_passwd }}
     priv=dim.*:ALL/{{ images_database }}.*:SELECT,INSERT,UPDATE
     state=present
-  when: db_created.changed
 
 - name:  Import database dump file to database
   become: yes
@@ -64,6 +63,7 @@
   template:
     src=my.cnf.j2
     dest=~/.my.cnf
+    mode=0600
 
 - name: create dim directories
   become: yes
