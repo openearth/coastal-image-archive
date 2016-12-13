@@ -118,8 +118,7 @@ then
   # | /sete/2011/c1/103_Apr.13/1302694201.Wed.Apr.13_11_30_01.UTC.2011.sete.c1.snap.jpg  | sete | 1302694201 |      1 | snap  |       690 |
   # +------------------------------------------------------------------------------------+------+------------+--------+-------+-----------+
 
-  DBUSER="root"
-  DATABASE="SiteImages"
+  # user and database are expected to be present in ~dim/.my.cnf
   DBTABLE="Images"
 
   # NOTE: Remove first character from camera as that is a 'c' and needs to go to store value in sql int column.
@@ -127,9 +126,9 @@ then
 
   # Build SQL query string
   SQL="INSERT INTO ${DBTABLE} (location,site,epoch,camera,type,dayminute) "
-  SQL="${SQL} VALUES (\"${NEWFILENAME}\",\"${STATION}\",\"${EPOCHTIME}\",\"${SQLCAMERA}\",\"${IMAGETYPE}\",\"${MINUTES_SINCE_MIDNIGHT}\" ) "
+  SQL="${SQL} VALUES (\"/${STATION}/${STRINGPART1}/${CAMERA}/${STRINGPART2}/${NEWFILENAME}\",\"${STATION}\",\"${EPOCHTIME}\",\"${SQLCAMERA}\",\"${IMAGETYPE}\",\"${MINUTES_SINCE_MIDNIGHT}\" ) "
 
-  RESULT=$( mysql -h localhost -u "${DBUSER}"  --database="${DATABASE}" -e "${SQL}" 2>&1 )
+  RESULT=$( mysql -e "${SQL}" 2>&1 )
 
   ret=$?
   if [ "$ret" -ne 0 ]
@@ -139,7 +138,7 @@ then
 
 else
   # move was not succesfull. Let's tell someone
-  logger "Last move of ${SOURCEFILE} to ${DESTINATIONDIR}/${NEWFILENAME} was NOT succesfull"
+  logger "Last move of ${SOURCEFILE} to ${DESTINATIONDIR}/${NEWFILENAME} was NOT successful"
 fi
 
 # Done
