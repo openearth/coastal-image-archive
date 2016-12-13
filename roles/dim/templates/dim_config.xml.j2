@@ -2,8 +2,8 @@
 <dimConfigurationRoot xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="/opt/dim/etc/schema/dimConfiguration.xsd">
 
     <userDefinedVariables>
-        <dataDirectory>{{ dim_target_directory }}/dim/data</dataDirectory>
-        <workDirectory>{{ dim_target_directory }}/dim/work</workDirectory>
+        <dataDirectory>{{ dim_data_directory }}</dataDirectory>
+        <workDirectory>{{ dim_work_directory }}</workDirectory>
     </userDefinedVariables>
     <sites>
         <includeDirectory includePattern="*.xml">sites</includeDirectory>
