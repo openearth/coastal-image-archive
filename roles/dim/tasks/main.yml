@@ -117,7 +117,8 @@
   become_user: dim
   copy:
      src=contrib/rename.sh
-     dest={{ dim_config_dir }}/rename.sh
+     dest=/opt/dim/bin/rename.sh
+     mode=0755
 
 - name: create target directories
   become: yes
