@@ -72,12 +72,11 @@
     state=directory
     owner=dim
     group=dim
-    mode=2775
+    recurse=yes
   with_items:
     - "{{ dim_target_directory }}"
-    - "{{ dim_target_directory }}/dim"
-    - "{{ dim_target_directory }}/dim/data"
-    - "{{ dim_target_directory }}/dim/work"
+    - "{{ dim_data_directory }}"
+    - "{{ dim_work_directory }}"
 
 - name: create dim .ssh directory
   become: yes
@@ -134,7 +133,8 @@
     path={{ dim_target_directory }}/{{ item.id }}
     state=directory
     owner=dim
-    group=dim
+    group=apache
+    mode=2770
   with_items: "{{ dim_sites }}"
 
 - name: make dim3_init executable
