@@ -46,7 +46,7 @@
   mysql_user:
     name={{ dim_database_user }}
     password={{ dim_database_passwd }}
-    priv=dim.*:ALL
+    priv=dim.*:ALL/{{ images_database }}.*:SELECT,INSERT,UPDATE
     state=present
   when: db_created.changed
 
@@ -58,6 +58,13 @@
     target=/opt/dim/tools/database/mysql/create_tables.sql
   when: db_created.changed
 
+- name: create ~dim/.my.cnf with images_database as default
+  become: yes
+  become_user: dim
+  template:
+    src=my.cnf.j2
+    dest=~/.my.cnf
+
 - name: create dim directories
   become: yes
   file:
@@ -65,6 +72,7 @@
     state=directory
     owner=dim
     group=dim
+    mode=2775
   with_items:
     - "{{ dim_target_directory }}"
     - "{{ dim_target_directory }}/dim"
