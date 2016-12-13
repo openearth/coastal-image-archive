@@ -3,3 +3,4 @@ allow_duplicates: no
 dependencies:
   - { role: common}
   - { role: mysql}
+  - { role: databases}

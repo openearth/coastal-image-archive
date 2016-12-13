@@ -26,8 +26,8 @@
             <actions id="01-rename">
                 <action id="01-rename">
                     <command>
-                       <executable>/bin/bash {{ dim_config_dir }}/rename.sh</executable>
-                       <arguments>%SOURCE_DIRECTORY% %TARGET_DIRECTORY% {{ item.id }}</arguments>
+                       <executable>/opt/dim/bin/rename.sh</executable>
+                       <arguments>%ABSOLUTE_FILE_PATH% %TARGET_DIRECTORY% {{ item.id }}</arguments>
                     </command>
                 </action>
             </actions>

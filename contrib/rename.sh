@@ -48,16 +48,16 @@ fi
 # Check that inputfile exists
 if [ ! -f $1 ]
 then
-  echo "FATAL: input file not found!"
-  logger "FATAL: input file not found!"
+  echo "FATAL: input file $1 not found!"
+  logger "FATAL: input file $1 not found!"
   usage
   exit
 fi
 # Check that destination directory exists
 if [ ! -d $2 ]
 then
-  echo "FATAL: No destination directory found."
-  logger "FATAL: No destination directory found."
+  echo "FATAL: No destination directory $2 found."
+  logger "FATAL: No destination directory $2 found."
   usage
   exit
 fi
@@ -82,7 +82,7 @@ CAMERA=${FILEARRAY[1]}
 IMAGETYPE=${FILEARRAY[2]}
 
 # Split epochtime in components to insert into string for filename
-DATESTRINGPART=$(date -d @${EPOCHTIME} "+%a.%m.%d_%H_%M_%S.UTC.%Y")
+DATESTRINGPART=$(date -d @${EPOCHTIME} "+%a.%b.%d_%H_%M_%S.UTC.%Y")
 
 # <epoch time>.<weekday>.<month>.<day>_<hour>_<min>_<sec>.UTC.<year>.<station>.c<camera #>.< image type: snap|timex|min|max>.jpg
 NEWFILENAME="${FILEARRAY[0]}.${DATESTRINGPART}.${STATION}.${CAMERA}.${IMAGETYPE}.jpg"
@@ -92,7 +92,7 @@ NEWFILENAME="${FILEARRAY[0]}.${DATESTRINGPART}.${STATION}.${CAMERA}.${IMAGETYPE}
 STRINGPART1=$(date -d @${EPOCHTIME} "+%Y")
 
 # Split epochtime in components to insert into string for second part of directory structure
-STRINGPART2=$(date -d @${EPOCHTIME} "+%j_%m.%d")
+STRINGPART2=$(date -d @${EPOCHTIME} "+%j_%b.%d")
 
 DESTINATIONDIR="$2/${STATION}/${STRINGPART1}/${CAMERA}/${STRINGPART2}/"
 
@@ -118,8 +118,7 @@ then
   # | /sete/2011/c1/103_Apr.13/1302694201.Wed.Apr.13_11_30_01.UTC.2011.sete.c1.snap.jpg  | sete | 1302694201 |      1 | snap  |       690 |
   # +------------------------------------------------------------------------------------+------+------------+--------+-------+-----------+
 
-  DBUSER="root"
-  DATABASE="SiteImages"
+  # user and database are expected to be present in ~dim/.my.cnf
   DBTABLE="Images"
 
   # NOTE: Remove first character from camera as that is a 'c' and needs to go to store value in sql int column.
@@ -127,9 +126,9 @@ then
 
   # Build SQL query string
   SQL="INSERT INTO ${DBTABLE} (location,site,epoch,camera,type,dayminute) "
-  SQL="${SQL} VALUES (\"${DESTINATIONDIR}/${NEWFILENAME}\",\"${STATION}\",\"${EPOCHTIME}\",\"${SQLCAMERA}\",\"${IMAGETYPE}\",\"${MINUTES_SINCE_MIDNIGHT}\" ) "
+  SQL="${SQL} VALUES (\"/${STATION}/${STRINGPART1}/${CAMERA}/${STRINGPART2}/${NEWFILENAME}\",\"${STATION}\",\"${EPOCHTIME}\",\"${SQLCAMERA}\",\"${IMAGETYPE}\",\"${MINUTES_SINCE_MIDNIGHT}\" ) "
 
-  RESULT=$( mysql -h localhost -u "${DBUSER}"  --database="${DATABASE}" -e "${SQL}" 2>&1 )
+  RESULT=$( mysql -e "${SQL}" 2>&1 )
 
   ret=$?
   if [ "$ret" -ne 0 ]
@@ -139,7 +138,7 @@ then
 
 else
   # move was not succesfull. Let's tell someone
-  logger "Last move of ${SOURCEFILE} to ${DESTINATIONDIR}/${NEWFILENAME} was NOT succesfull"
+  logger "Last move of ${SOURCEFILE} to ${DESTINATIONDIR}/${NEWFILENAME} was NOT successful"
 fi
 
 # Done

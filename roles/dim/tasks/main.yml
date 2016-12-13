@@ -46,9 +46,8 @@
   mysql_user:
     name={{ dim_database_user }}
     password={{ dim_database_passwd }}
-    priv=dim.*:ALL
+    priv=dim.*:ALL/{{ images_database }}.*:SELECT,INSERT,UPDATE
     state=present
-  when: db_created.changed
 
 - name:  Import database dump file to database
   become: yes
@@ -58,6 +57,14 @@
     target=/opt/dim/tools/database/mysql/create_tables.sql
   when: db_created.changed
 
+- name: create ~dim/.my.cnf with images_database as default
+  become: yes
+  become_user: dim
+  template:
+    src=my.cnf.j2
+    dest=~/.my.cnf
+    mode=0600
+
 - name: create dim directories
   become: yes
   file:
@@ -65,11 +72,11 @@
     state=directory
     owner=dim
     group=dim
+    recurse=yes
   with_items:
     - "{{ dim_target_directory }}"
-    - "{{ dim_target_directory }}/dim"
-    - "{{ dim_target_directory }}/dim/data"
-    - "{{ dim_target_directory }}/dim/work"
+    - "{{ dim_data_directory }}"
+    - "{{ dim_work_directory }}"
 
 - name: create dim .ssh directory
   become: yes
@@ -117,7 +124,8 @@
   become_user: dim
   copy:
      src=contrib/rename.sh
-     dest={{ dim_config_dir }}/rename.sh
+     dest=/opt/dim/bin/rename.sh
+     mode=0755
 
 - name: create target directories
   become: yes
@@ -125,7 +133,8 @@
     path={{ dim_target_directory }}/{{ item.id }}
     state=directory
     owner=dim
-    group=dim
+    group=apache
+    mode=2770
   with_items: "{{ dim_sites }}"
 
 - name: make dim3_init executable
