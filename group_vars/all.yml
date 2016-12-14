@@ -1,3 +1,9 @@
 ---
+# run dependencies
+dep: True
+
 # passwords
 dim_database_passwd: "{{ lookup('password', '/tmp/dim_database_passwd chars=ascii_letters,digits') }}"
+
+# directories
+dim_target_directory: /data/images

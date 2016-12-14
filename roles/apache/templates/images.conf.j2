@@ -1,13 +1,13 @@
 # this file is to configure access to the /data directory
 
-alias /sites /data
+alias /sites {{ dim_target_directory }}
 
 <LocationMatch "^/sites+$">
     Options +Indexes
     ErrorDocument 403 /.noindex.html
 </LocationMatch>
 
-<Directory /data>
+<Directory {{ dim_target_directory }}>
     Options Indexes FollowSymLinks
     AllowOverride None
     Require all granted
