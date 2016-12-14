@@ -14,7 +14,7 @@
         <source id="{{ item.id }}">
             <site ref="{{ item.id }}"/>
             <remoteDirectory>{{ dim_source_directory }}</remoteDirectory>
-            <includePattern>*.jpg</includePattern>
+            <includePattern>*{{ dataset.extension | default(".jpg") }}</includePattern>
             <recursive>false</recursive>
         {% if item.maximum_file_age is defined %}
             <maximumFileAge>{{ item.maximum_file_age }}</maximumFileAge>

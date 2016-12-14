@@ -28,8 +28,8 @@
 
 function usage {
   echo "This script renames files."
-  echo "Original input format:  <epoch time>.c<camera #>.<image type: snap|timex|min|max>.jpg"
-  echo "Output filename format: <epoch time>.<weekday>.<month>.<day>_<hour>_<min>_<sec>.UTC.<year>.<station>.c<camera #>.< image type: snap|timex|min|max>.jpg"
+  echo "Original input format:  <epoch time>.c<camera #>.<image type: snap|timex|min|max|stack><extension .jpg|.ras.gz>"
+  echo "Output filename format: <epoch time>.<weekday>.<month>.<day>_<hour>_<min>_<sec>.UTC.<year>.<station>.c<camera #>.< image type: snap|timex|min|max><extension .jpg|.ras.gz>"
   echo 
   echo "To do this 3 arguments are needed:"
   echo "First argument: complete path of the imported image file."
@@ -80,12 +80,13 @@ IFS='.' read -r -a FILEARRAY <<< "${FILENAME}"
 EPOCHTIME=${FILEARRAY[0]}
 CAMERA=${FILEARRAY[1]} 
 IMAGETYPE=${FILEARRAY[2]}
+EXTENSION=${FILENAME##*$IMAGETYPE}
 
 # Split epochtime in components to insert into string for filename
 DATESTRINGPART=$(date -d @${EPOCHTIME} "+%a.%b.%d_%H_%M_%S.UTC.%Y")
 
 # <epoch time>.<weekday>.<month>.<day>_<hour>_<min>_<sec>.UTC.<year>.<station>.c<camera #>.< image type: snap|timex|min|max>.jpg
-NEWFILENAME="${FILEARRAY[0]}.${DATESTRINGPART}.${STATION}.${CAMERA}.${IMAGETYPE}.jpg"
+NEWFILENAME="${FILEARRAY[0]}.${DATESTRINGPART}.${STATION}.${CAMERA}.${IMAGETYPE}${EXTENSION}"
 
 
 # Split epochtime in components to insert into string for first part of directory structure
