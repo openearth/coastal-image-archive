@@ -9,10 +9,10 @@
     - httpd
     - mod_wsgi
 
-- name: Install configuration to access /data directory using the /sites url
+- name: Install configuration to access dim_target_directory directory using the /sites url
   become: yes
-  copy:
-     src=files/images.conf
+  template:
+     src=images.conf.j2
      dest=/etc/httpd/conf.d/images.conf
 
 
