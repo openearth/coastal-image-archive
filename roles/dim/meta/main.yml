@@ -4,3 +4,4 @@ dependencies:
   - { role: common}
   - { role: mysql}
   - { role: databases}
+  - { role: apache}
