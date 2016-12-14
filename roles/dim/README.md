@@ -6,6 +6,7 @@ Deployment of Archive server for coastal images
 ```
 dim_source_directory: # path of source data at remote site
 dim_target_directory: # path at dim server to store retrieved data
+images_database: # database name to store the image details in
 dim_sites:
   - id: # name of remote site
     hostname: # hostname of remote site server
@@ -15,4 +16,4 @@ dim_sites:
       - id: images # name of dataset to retrieve from remote site
 ```
 
-Put these variables in vars/source_vars.yml
+Put these variables in host_vars

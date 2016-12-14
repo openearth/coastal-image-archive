@@ -1,9 +1,4 @@
 ---
-- name: include confidential source_vars.yml file
-  include_vars: source_vars.yml
-  register: source_vars_included
-  ignore_errors: True
-
 - name: Copy Perl module packages to server
   copy:
     src={{ dim_downloads_dir }}/{{ item }}
@@ -105,7 +100,7 @@
   become_user: dim
   template:
     src=datasets.xml.j2
-    dest={{ dim_config_dir }}/datasets/datasets_{{ item.id }}.xml
+    dest={{ dim_config_dir }}/datasets/{{ item.id }}.xml
     backup=yes
   with_items: "{{ dim_sites }}" # datasets are (nested) item in dim_sites variable
 
@@ -114,7 +109,7 @@
   become_user: dim
   template:
     src=site.xml.j2
-    dest={{ dim_config_dir }}/sites/site_{{ item.id }}.xml
+    dest={{ dim_config_dir }}/sites/{{ item.id }}.xml
     backup=yes
   with_items: "{{ dim_sites }}"
 
