@@ -80,19 +80,18 @@
 
 - name: create dim .ssh directory
   become: yes
+  become_user: dim
   file:
-    path=/opt/dim/.ssh
+    path=~/.ssh
     state=directory
     mode=700
-    owner=dim
-    group=dim
 
 - name: create .ssh/config
   become: yes
   become_user: dim
   template:
     src=ssh_config.j2
-    dest=/opt/dim/.ssh/config
+    dest=~/.ssh/config
 
 - name: configure dim
   become: yes

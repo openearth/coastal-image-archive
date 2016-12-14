@@ -4,10 +4,5 @@
   hosts: all
 
   roles:
-    - { role: common, tags: 'common'}
-    - { role: matlab, tags: 'matlab'}
-    - { role: docker, tags: 'docker'}
     - { role: dim, tags: 'dim'}
-    - { role: apache, tags: 'apache'}
-    - { role: databases, tags: 'databases'}
 
