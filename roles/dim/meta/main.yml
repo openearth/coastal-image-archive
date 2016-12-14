@@ -1,7 +1,7 @@
 ---
 allow_duplicates: no
 dependencies:
-  - { role: common}
-  - { role: mysql}
-  - { role: databases}
-  - { role: apache}
+  - { role: common, when: dep}
+  - { role: mysql, when: dep}
+  - { role: databases, when: dep}
+  - { role: apache, when: dep}
