@@ -4,7 +4,16 @@ dep: True
 
 # passwords
 credentials_dir: '~/credentials/{{ ansible_hostname }}'
+
+# dim database variables
+dim_database_host: localhost
+dim_database_name: dim
+dim_database_user: dim
 dim_database_passwd: "{{ lookup('password', credentials_dir + '/dim_database_passwd chars=ascii_letters,digits') }}"
 
-# directories
-dim_target_directory: /data/images
+# dim settings
+dim_data_directory: /data/images
+dim_work_directory: /data/dim/work
+dim_cleanup_period: 86400
+dim_cronentry: "15,45 * * * *"
+

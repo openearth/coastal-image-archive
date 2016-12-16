@@ -5,7 +5,8 @@ Deployment of Archive server for coastal images
 
 ```
 dim_source_directory: # path of source data at remote site
-dim_target_directory: # path at dim server to store retrieved data
+dim_work_directory: # temporary storage directory for dim
+dim_data_directory: # path at dim server to store retrieved data
 images_database: # database name to store the image details in
 dim_sites:
   - id: # name of remote site
