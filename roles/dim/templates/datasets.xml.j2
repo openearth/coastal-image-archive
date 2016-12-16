@@ -17,7 +17,7 @@
             <includePattern>*{{ dataset.extension | default(".jpg") }}</includePattern>
             <recursive>false</recursive>
         {% if item.maximum_file_age is defined %}
-            <maximumFileAge>{{ item.maximum_file_age }}</maximumFileAge>
+            <maximumFileAge>{{ dataset.maximum_file_age }}</maximumFileAge>
         {% endif %}
             <cleanup>false</cleanup>
         </source>
