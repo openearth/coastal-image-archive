@@ -16,9 +16,7 @@
             <remoteDirectory>{{ dim_source_directory }}</remoteDirectory>
             <includePattern>*{{ dataset.extension | default(".jpg") }}</includePattern>
             <recursive>false</recursive>
-        {% if item.maximum_file_age is defined %}
-            <maximumFileAge>{{ item.maximum_file_age }}</maximumFileAge>
-        {% endif %}
+            <maximumFileAge>{{ dataset.maximum_file_age | default(86400) }}</maximumFileAge>
             <cleanup>false</cleanup>
         </source>
         <targets id="01-{{ dataset.id }}">
@@ -32,7 +30,7 @@
                 </action>
             </actions>
             <target active="true" id="01-backup">
-                <localDirectory>{{ dim_target_directory }}</localDirectory>
+                <localDirectory>${dataDirectory}</localDirectory>
             </target>
         </targets>
     </dataset>

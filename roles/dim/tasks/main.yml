@@ -69,7 +69,6 @@
     group=dim
     recurse=yes
   with_items:
-    - "{{ dim_target_directory }}"
     - "{{ dim_data_directory }}"
     - "{{ dim_work_directory }}"
 
@@ -93,14 +92,14 @@
   become_user: dim
   template:
     src=dim_config.xml.j2
-    dest={{ dim_config_dir }}/dim_config.xml
+    dest=~/etc/dim_config.xml
 
 - name: configure dim datasets
   become: yes
   become_user: dim
   template:
     src=datasets.xml.j2
-    dest={{ dim_config_dir }}/datasets/{{ item.id }}.xml
+    dest=~/etc/datasets/{{ item.id }}.xml
     backup=yes
   with_items: "{{ dim_sites }}" # datasets are (nested) item in dim_sites variable
 
@@ -109,7 +108,7 @@
   become_user: dim
   template:
     src=site.xml.j2
-    dest={{ dim_config_dir }}/sites/{{ item.id }}.xml
+    dest=~/etc/sites/{{ item.id }}.xml
     backup=yes
   with_items: "{{ dim_sites }}"
 
@@ -118,13 +117,13 @@
   become_user: dim
   copy:
      src=contrib/rename.sh
-     dest=/opt/dim/bin/rename.sh
+     dest=~/bin/rename.sh
      mode=0755
 
 - name: create target directories
   become: yes
   file:
-    path={{ dim_target_directory }}/{{ item.id }}
+    path={{ dim_data_directory }}/{{ item.id }}
     state=directory
     owner=dim
     group=apache
@@ -133,8 +132,9 @@
 
 - name: make dim3_init executable
   become: yes
+  become_user: dim
   file:
-    path: /opt/dim/bin/dim3_init
+    path: ~/bin/dim3_init
     state: touch
     mode: 0750
 

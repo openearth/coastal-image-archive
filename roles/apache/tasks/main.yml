@@ -9,7 +9,7 @@
     - httpd
     - mod_wsgi
 
-- name: Install configuration to access dim_target_directory directory using the /sites url
+- name: Install configuration to access dim_data_directory directory using the /sites url
   become: yes
   template:
      src=images.conf.j2
