@@ -1,0 +1,6 @@
+---
+allow_duplicates: no
+dependencies:
+  - { role: common, when: dep}
+  - { role: mysql, when: dep}
+  - { role: databases, when: dep}

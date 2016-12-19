@@ -1,0 +1,156 @@
+---
+- name: Copy Perl module packages to server
+  copy:
+    src={{ dim_downloads_dir }}/{{ item }}
+    dest=/tmp/{{ item }}
+  with_items: "{{ perl_modules }}"
+
+- name: Copy Dim package to server
+  copy:
+    src={{ dim_downloads_dir }}/{{ dim_package }}
+    dest=/tmp/{{ dim_package }}
+
+- name: Install perl module packages
+  become: yes
+  yum:
+    name=/tmp/{{ item }}
+    state=present
+  with_items: "{{ perl_modules }}"
+
+- name: Install perl-Net-SFTP-Foreign package on server
+  become: yes
+  yum:
+    name=perl-Net-SFTP-Foreign
+    state=present
+
+- name: Install Dim package on server
+  become: yes
+  yum:
+    name=/tmp/{{ dim_package }}
+    state=present
+
+- name: Create a new database
+  become: yes
+  mysql_db:
+    name={{ dim_database_name }}
+    state=present
+  register: db_created
+
+- name:  Create database user with all database privileges on database dim
+  become: yes
+  mysql_user:
+    name={{ dim_database_user }}
+    password={{ dim_database_passwd }}
+    priv=dim.*:ALL/{{ images_database }}.*:SELECT,INSERT,UPDATE
+    state=present
+
+- name:  Import database dump file to database
+  become: yes
+  mysql_db:
+    name={{ dim_database_name }}
+    state=import
+    target=/opt/dim/tools/database/mysql/create_tables.sql
+  when: db_created.changed
+
+- name: create ~dim/.my.cnf with images_database as default
+  become: yes
+  become_user: dim
+  template:
+    src=my.cnf.j2
+    dest=~/.my.cnf
+    mode=0600
+
+- name: create dim directories
+  become: yes
+  file:
+    path={{ item }}
+    state=directory
+    owner=dim
+    group=dim
+    recurse=yes
+  with_items:
+    - "{{ dim_data_directory }}"
+    - "{{ dim_work_directory }}"
+
+- name: create dim .ssh directory
+  become: yes
+  become_user: dim
+  file:
+    path=~/.ssh
+    state=directory
+    mode=700
+
+- name: create .ssh/config
+  become: yes
+  become_user: dim
+  template:
+    src=ssh_config.j2
+    dest=~/.ssh/config
+
+- name: configure dim
+  become: yes
+  become_user: dim
+  template:
+    src=dim_config.xml.j2
+    dest=~/etc/dim_config.xml
+
+- name: configure dim datasets
+  become: yes
+  become_user: dim
+  template:
+    src=datasets.xml.j2
+    dest=~/etc/datasets/{{ item.id }}.xml
+    backup=yes
+  with_items: "{{ dim_sites }}" # datasets are (nested) item in dim_sites variable
+
+- name: configure dim sites
+  become: yes
+  become_user: dim
+  template:
+    src=site.xml.j2
+    dest=~/etc/sites/{{ item.id }}.xml
+    backup=yes
+  with_items: "{{ dim_sites }}"
+
+- name: copy rename.sh
+  become: yes
+  become_user: dim
+  copy:
+     src=contrib/rename.sh
+     dest=~/bin/rename.sh
+     mode=0755
+
+- name: create target directories
+  become: yes
+  file:
+    path={{ dim_data_directory }}/{{ item.id }}
+    state=directory
+    owner=dim
+    mode=755
+  with_items: "{{ dim_sites }}"
+
+- name: make dim3_init executable
+  become: yes
+  become_user: dim
+  file:
+    path: ~/bin/dim3_init
+    state: touch
+    mode: 0750
+
+- name: make dim3_init executable
+  become: yes
+  file:
+    path: /etc/systemd/system/dim3.service
+    state: touch
+    mode: 0664
+
+- name: systemctl daemon-reload
+  become: yes
+  command: systemctl daemon-reload
+  notify: restart dim
+
+- name: make sure dim is started on boot
+  become: yes
+  service:  name=dim3
+            state=started
+            enabled=yes

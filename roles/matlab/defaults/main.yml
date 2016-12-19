@@ -1,0 +1,5 @@
+---
+# defaults file for matlab
+
+matlab_destination_path: /opt/matlab
+matlab_license_file: license.lic

@@ -1,0 +1,32 @@
+---
+# tasks file for databases
+- name: create databases
+  become: yes
+  mysql_db:
+    name={{ item }}
+    state=present
+  with_items: "{{ databases }}"
+
+- name: copy database dumps
+  copy:
+    src={{ database_downloads_dir }}/{{ item.target }}
+    dest=/tmp/{{ item.target }}
+  with_items: "{{ database_dumps }}"
+
+- name: load database dumps
+  become: yes
+  mysql_db:
+    name={{ item.name }}
+    target=/tmp/{{ item.target }}
+    state=import
+  with_items: "{{ database_dumps }}"
+
+- name: create mysql users
+  become: yes
+  mysql_user:
+    name={{ item.name }}
+    password={{ item.passwd }}
+    host={{ item.host }}
+    priv={{ item.priv | default("localhost") }}
+    state=present
+  with_items: '{{ mysql_users }}'

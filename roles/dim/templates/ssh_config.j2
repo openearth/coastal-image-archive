@@ -1,0 +1,7 @@
+{% for item in dim_sites %}
+Host {{ item.id }}
+    HostName {{ item.hostname }}
+    Port {{ item.port | default(22)  }}
+    User {{ item.username }}
+
+{% endfor %}

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dimConfigurationRoot xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="/opt/dim/etc/schema/dimConfiguration.xsd">
+
+    <userDefinedVariables>
+        <dataDirectory>{{ dim_data_directory }}</dataDirectory>
+        <workDirectory>{{ dim_work_directory }}</workDirectory>
+    </userDefinedVariables>
+    <sites>
+        <includeDirectory includePattern="*.xml">sites</includeDirectory>
+    </sites>
+
+    <datasets>
+        <includeDirectory includePattern="*.xml">datasets</includeDirectory>
+    </datasets>
+
+    <databaseConfiguration>
+       <mysql>
+            <hostname>{{ dim_database_host }}</hostname>
+            <databaseName>{{ dim_database_name }}</databaseName>
+            <username>{{ dim_database_user }}</username>
+            <password>{{ dim_database_passwd }}</password>
+        </mysql>
+<!--        <sqlite>
+                        <databaseFile>/tmp/dimlog.db</databaseFile>
+        </sqlite> -->
+    </databaseConfiguration>
+
+</dimConfigurationRoot>
+

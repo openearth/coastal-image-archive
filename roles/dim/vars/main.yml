@@ -1,0 +1,26 @@
+---
+# vars file for dim
+dim_package: dim-688-3.noarch.rpm
+perl_modules:
+  - perl-Array-Utils-0.5-1.el7.centos.noarch.rpm
+  - perl-Data-Traverse-0.03-1.el7.centos.noarch.rpm
+  - perl-DateTime-Cron-Simple-0.2-1.el7.centos.noarch.rpm
+  - perl-DateTime-Format-Duration-1.04-1.el7.centos.noarch.rpm
+  - perl-DateTime-Format-Duration-XSD-0.01-1.el7.centos.noarch.rpm
+  - perl-DateTime-Format-Strptime-1.56-1.el7.centos.noarch.rpm
+  - perl-Getopt-ArgvFile-1.11-1.el7.centos.noarch.rpm
+  - perl-Getopt-Lucid-1.05-1.el7.centos.noarch.rpm
+  - perl-Mojolicious-5.17-1.el7.centos.noarch.rpm
+  - perl-PAR-1.007-1.el7.centos.noarch.rpm
+  - perl-Parallel-ForkManager-1.16-1.el7.centos.noarch.rpm
+  - perl-Pod-Markdown-2.002-1.el7.centos.noarch.rpm
+  - perl-Schedule-Cron-1.01-1.el7.centos.noarch.rpm
+  - perl-XML-LibXML-Iterator-1.04-1.el7.centos.noarch.rpm
+  - perl-XML-LibXML-Simple-0.94-1.el7.centos.noarch.rpm
+  - perl-XML-NodeFilter-0.01-1.el7.centos.noarch.rpm
+  - perl-EV-4.03-1.el7.centos.x86_64.rpm
+  - perl-EV-debuginfo-4.03-1.el7.centos.x86_64.rpm
+  - perl-PAR-Packer-1.019-1.el7.centos.x86_64.rpm
+  - perl-PAR-Packer-debuginfo-1.019-1.el7.centos.x86_64.rpm
+  - perl-PDL-NetCDF-4.20-1.el7.centos.x86_64.rpm
+  - perl-PDL-NetCDF-debuginfo-4.20-1.el7.centos.x86_64.rpm

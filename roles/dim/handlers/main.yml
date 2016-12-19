@@ -1,0 +1,6 @@
+---
+# handlers file for dim
+
+- name: restart dim
+  become: yes
+  service: name=dim3 state=restarted

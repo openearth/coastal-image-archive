@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dimConfigurationPart xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="/opt/dim/etc/schema/dimConfiguration.xsd">
+{% for dataset in item.datasets %}
+    <dataset id="{{ item.id }}_{{ dataset.id }}">
+        <workDirectory>${workDirectory}/${dataset@id}</workDirectory>
+    {% if dataset.cronentry is defined %}
+        <cronentry>{{ dataset.cronentry }}</cronentry>
+    {% else %}
+        <cronentry>{{ dim_cronentry }}</cronentry>
+    {% endif %}
+        <cleanup active="true">
+            <period>{{ dim_cleanup_period }}</period>
+        </cleanup>
+        <source id="{{ item.id }}">
+            <site ref="{{ item.id }}"/>
+            <remoteDirectory>{{ dim_source_directory }}</remoteDirectory>
+            <includePattern>*{{ dataset.extension | default(".jpg") }}</includePattern>
+            <recursive>false</recursive>
+            <maximumFileAge>{{ dataset.maximum_file_age | default(86400) }}</maximumFileAge>
+            <cleanup>false</cleanup>
+        </source>
+        <targets id="01-{{ dataset.id }}">
+            <recursive>false</recursive>
+            <actions id="01-rename">
+                <action id="01-rename">
+                    <command>
+                       <executable>/opt/dim/bin/rename.sh</executable>
+                       <arguments>%ABSOLUTE_FILE_PATH% %TARGET_DIRECTORY% {{ item.site }}</arguments>
+                    </command>
+                </action>
+            </actions>
+            <target active="true" id="01-backup">
+                <localDirectory>${dataDirectory}</localDirectory>
+            </target>
+        </targets>
+    </dataset>
+{% endfor %}
+</dimConfigurationPart>

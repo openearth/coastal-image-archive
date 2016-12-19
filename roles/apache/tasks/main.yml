@@ -1,0 +1,24 @@
+---
+# tasks file for apache
+
+- name: install apache
+  become: yes
+  yum:  name={{ item }}
+        state=latest
+  with_items:
+    - httpd
+    - mod_wsgi
+
+- name: Install configuration to access dim_data_directory directory using the /sites url
+  become: yes
+  template:
+     src=images.conf.j2
+     dest=/etc/httpd/conf.d/images.conf
+
+
+- name: make sure apache is started on boot
+  become: yes
+  service:  name=httpd
+            state=started
+            enabled=yes
+  notify: restart apache

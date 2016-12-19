@@ -1,0 +1,54 @@
+---
+# tasks file for matlab
+
+- name: get mac address of host
+  shell: /sbin/ip addr sh eth0 | grep ether | awk '{ print $2 }'
+  register: mac
+
+- fail: msg="MANUAL ACTION NEEDED, Put mac_address {{ mac.stdout }} in group_vars, request file installation key (FIK) and license.lic file put FIK as matlab_file_installation_key in group_vars as well as the matlab_installer and matlab_components"
+  when: mac.stdout != mac_address
+
+- name: install essential stuff
+  become: yes
+  yum:  name={{ item }}
+        state=latest
+  with_items:
+    - libXtst
+    - libXt
+    - libXmu
+    - java-1.7.0-openjdk
+
+- name: create matlab installer dir
+  become: yes
+  file: path=/root/matlab state=directory
+
+- name: create matlab installer dir
+  become: yes
+  file: path=/root/matlab/archives state=directory
+
+- name: copy required matlab installer
+  become: yes
+  unarchive: src={{ matlab_downloads_dir }}/{{ matlab_installer }} dest=/root/matlab creates=/root/matlab/install
+  when:
+
+- name: copy required matlab components
+  become: yes
+  copy: src={{ matlab_downloads_dir }}/{{ item }} dest=/root/matlab/archives/{{ item }}
+  with_items: '{{ matlab_components }}'
+
+- name: copy keys for matlab files
+  become: yes
+  template: src=installer_input.txt dest=/root/matlab/installer_input.txt
+  when: matlab_file_installation_key is defined
+
+- name: create matlab licenses dir
+  become: yes
+  file: path=/opt/matlab/licenses/ state=directory
+
+- name: copy matlab_license_file
+  become: yes
+  copy: src={{ matlab_downloads_dir }}/{{ matlab_license_file }} dest=/opt/matlab/licenses/{{ matlab_license_file }}
+
+- name: install matlab
+  become: yes
+  command: /root/matlab/install -inputFile /root/matlab/installer_input.txt creates=/opt/matlab/bin/matlab
