@@ -5,4 +5,4 @@
 
   roles:
     - { role: dim, tags: 'dim'}
-
+    - { role: apache, tags: 'apache'}

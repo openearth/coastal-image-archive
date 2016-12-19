@@ -126,8 +126,7 @@
     path={{ dim_data_directory }}/{{ item.id }}
     state=directory
     owner=dim
-    group=apache
-    mode=2770
+    mode=755
   with_items: "{{ dim_sites }}"
 
 - name: make dim3_init executable
