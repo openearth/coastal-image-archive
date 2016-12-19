@@ -59,6 +59,6 @@ Vagrant.configure(2) do |config|
     ansible.verbose = "vv"
     ansible.limit = "vagrant-local"
     ansible.inventory_path = "inventory_otap"
-    ansible.tags = ['dim']
+    # ansible.tags = ['dim', 'apache']
   end
 end
