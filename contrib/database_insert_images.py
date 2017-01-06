@@ -64,8 +64,8 @@ class ImageList:
             if cur.rowcount == 0:
                 insert_sql = "INSERT INTO Images (location,site,epoch,camera,type,dayminute) " + \
                              "VALUES ('%s', '%s', %i, %i, '%s', %i)" % (I.get_long(), self.site, I.epoch, I.camera, I.image_type, I.dayminute)
-                # cur.execute(insert_sql)
-                # db.commit()
+                cur.execute(insert_sql)
+                db.commit()
                 n += 1
         db.close()
         print datetime.datetime.utcnow().strftime('%c UTC')
