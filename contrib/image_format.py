@@ -37,7 +37,7 @@ class ImageFormat:
         self.image_type = fileparts[2]
         self.ext = self.filename.split(self.image_type)[-1]
 
-        self.datetime = datetime.datetime.fromtimestamp(self.epoch)
+        self.datetime = datetime.datetime.utcfromtimestamp(self.epoch)
 
     def interprete_long(self):
         pass
