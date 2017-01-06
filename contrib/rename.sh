@@ -74,33 +74,10 @@ STATION=$3
 
 echo "Filename found : ${FILENAME}"
 
-# Split FILENAME into parts to get epoch
-IFS='.' read -r -a FILEARRAY <<< "${FILENAME}"
+NEWFILEPATH=$( python ~/bin/image_format.py --site ${STATION} ${FILENAME})
+NEWFILENAME=$(basename ${NEWFILEPATH})
 
-EPOCHTIME=${FILEARRAY[0]}
-CAMERA=${FILEARRAY[1]} 
-IMAGETYPE=${FILEARRAY[2]}
-EXTENSION=${FILENAME##*$IMAGETYPE}
-
-# Split epochtime in components to insert into string for filename
-DATESTRINGPART=$(date -d @${EPOCHTIME} "+%a.%b.%d_%H_%M_%S.UTC.%Y")
-
-# <epoch time>.<weekday>.<month>.<day>_<hour>_<min>_<sec>.UTC.<year>.<station>.c<camera #>.< image type: snap|timex|min|max>.jpg
-NEWFILENAME="${FILEARRAY[0]}.${DATESTRINGPART}.${STATION}.${CAMERA}.${IMAGETYPE}${EXTENSION}"
-
-
-# Split epochtime in components to insert into string for first part of directory structure
-STRINGPART1=$(date -d @${EPOCHTIME} "+%Y")
-
-# Split epochtime in components to insert into string for second part of directory structure
-STRINGPART2=$(date -d @${EPOCHTIME} "+%j_%b.%d")
-
-DESTINATIONDIR="$2/${STATION}/${STRINGPART1}/${CAMERA}/${STRINGPART2}/"
-
-# Calculate amount of minutes since midnight
-SECONDS=$(date -d @${EPOCHTIME} +%s)
-SECONDS_MIDNIGHT=$(date  +%s -d "$(date -d @${EPOCHTIME} +%Y-%m-%d) 00:00:00" )
-MINUTES_SINCE_MIDNIGHT=$(((SECONDS - SECONDS_MIDNIGHT) / 60))
+DESTINATIONDIR=$(dirname "$2${NEWFILEPATH}")
 
 mkdir -p "${DESTINATIONDIR}"
 
@@ -109,36 +86,9 @@ logger "Moving ${SOURCEFILE} to ${DESTINATIONDIR}/${NEWFILENAME}"
 
 mv  "${SOURCEFILE}"   "${DESTINATIONDIR}/${NEWFILENAME}"
 ret=$?
-if [ "$ret" -eq 0 ]
+if [ "$ret" -ne 0 ]
 then
-  # move was succesfull. Let's add this info to the Images database
-  # MariaDB [SiteImages]> select * from Images limit 1;
-  # +------------------------------------------------------------------------------------+------+------------+--------+-------+-----------+
-  # | location                                                                           | site | epoch      | camera | type  | dayminute |
-  # +------------------------------------------------------------------------------------+------+------------+--------+-------+-----------+
-  # | /sete/2011/c1/103_Apr.13/1302694201.Wed.Apr.13_11_30_01.UTC.2011.sete.c1.snap.jpg  | sete | 1302694201 |      1 | snap  |       690 |
-  # +------------------------------------------------------------------------------------+------+------------+--------+-------+-----------+
-
-  # user and database are expected to be present in ~dim/.my.cnf
-  DBTABLE="Images"
-
-  # NOTE: Remove first character from camera as that is a 'c' and needs to go to store value in sql int column.
-  SQLCAMERA="${CAMERA:1}"
-
-  # Build SQL query string
-  SQL="INSERT INTO ${DBTABLE} (location,site,epoch,camera,type,dayminute) "
-  SQL="${SQL} VALUES (\"/${STATION}/${STRINGPART1}/${CAMERA}/${STRINGPART2}/${NEWFILENAME}\",\"${STATION}\",\"${EPOCHTIME}\",\"${SQLCAMERA}\",\"${IMAGETYPE}\",\"${MINUTES_SINCE_MIDNIGHT}\" ) "
-
-  RESULT=$( mysql -e "${SQL}" 2>&1 )
-
-  ret=$?
-  if [ "$ret" -ne 0 ]
-  then
-    logger "Rename.sh: ERROR: some error occured using SQL statement '${SQL}'\nThe error message was: ${RESULT}"
-  fi
-
-else
-  # move was not succesfull. Let's tell someone
+  # move was not successful. Let's tell someone
   logger "Last move of ${SOURCEFILE} to ${DESTINATIONDIR}/${NEWFILENAME} was NOT successful"
 fi
 
