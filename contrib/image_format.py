@@ -67,6 +67,7 @@ class ImageFormat:
             filename = '.'.join(['%s' % self.epoch,
                                  self.datetime.strftime('%a.%b.%d_%H_%M_%S.UTC.%Y'),
                                  self.site,
+                                 'c%i' % self.camera,
                                  self.image_type,
                                  ]) + self.ext
             return '/'.join([path, filename])

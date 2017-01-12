@@ -12,10 +12,10 @@ select_sql = 'SELECT location FROM Images WHERE inarchive=0'
 cur.execute(select_sql)
 n = 0
 print '%i rows selected' % cur.rowcount
-for location in cur.fetchall():
-    fullpath = '/data/images%s' % location[0]
+for record in cur.fetchall():
+    fullpath = '/data/images%s' % record[0]
     if os.path.exists(fullpath):
-        update_sql = "UPDATE Images SET inarchive=1 WHERE location='%s'" % location[0]
+        update_sql = "UPDATE Images SET inarchive=1 WHERE location='%s'" % record[0]
         cur.execute(update_sql)
         n += 1
 
