@@ -1,0 +1,5 @@
+---
+allow_duplicates: no
+dependencies:
+  - { role: python, when: dep}
+  - { role: apache, when: dep}

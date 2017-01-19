@@ -1,0 +1,18 @@
+---
+# tasks file for python
+
+- name: install develop tools
+  become: yes
+  yum:  name={{ item }}
+        state=latest
+  with_items:
+    - python-virtualenvwrapper
+    - python-devel
+    - gcc
+    - make
+
+#- name: create main virtualenv
+#  shell: . /usr/bin/virtualenvwrapper.sh && mkvirtualenv main
+#  args:
+#    executable: /bin/bash
+#    creates: ~/.virtualenvs/main/bin/python

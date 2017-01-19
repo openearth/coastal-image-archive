@@ -1,0 +1,6 @@
+---
+# handlers file for django_app
+- name: restart apache
+  become: yes
+  service: name=httpd
+           state=restarted

@@ -1,0 +1,14 @@
+Alias /static {{ django_static }}
+<Directory {{ django_static }}>
+    Require all granted
+</Directory>
+
+<Directory {{ django_path }}/{{ django_app }}>
+    <Files wsgi.py>
+        Require all granted
+    </Files>
+</Directory>
+
+WSGIDaemonProcess {{ django_app }} python-path={{ django_path }}:{{ django_virtualenv }}/lib/python2.7/site-packages user={{ app_user }} group={{ app_user }}
+WSGIProcessGroup {{ django_app }}
+WSGIScriptAlias / {{ django_path }}/{{ django_app }}/wsgi.py

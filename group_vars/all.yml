@@ -17,3 +17,10 @@ dim_work_directory: /data/dim/work
 dim_cleanup_period: 86400
 dim_cronentry: "15,45 * * * *"
 
+# django paths
+app_user: django
+project_path: /opt/django-app
+django_path: "{{ project_path}}/coastal-image-browser"
+django_app: main
+django_virtualenv: "{{ project_path}}/venv"
+django_static: "{{ project_path}}/coastal-image-browser/static"
