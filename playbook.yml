@@ -5,5 +5,4 @@
 
   roles:
     - { role: dim, tags: 'dim'}
-    - { role: apache, tags: 'apache'}
     - { role: django-app, tags: 'django-app'}

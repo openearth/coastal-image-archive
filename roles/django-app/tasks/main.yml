@@ -42,10 +42,19 @@
     repo: https://github.com/openearth/coastal-image-browser.git
     dest: "{{ django_path }}"
     update: yes
+    force: yes
+
+- name: create .my-images.cnf with images_database as default
+  become: yes
+  become_user: "{{ app_user }}"
+  template:
+    src=my.cnf.j2
+    dest="{{ django_path }}/.my-images.cnf"
+    mode=0600
 
 - name: install django
   become: yes
-  become_user: django
+  become_user: "{{ app_user }}"
   pip:  requirements="{{ django_path }}/requirements.txt"
         extra_args=--upgrade
         virtualenv={{ django_virtualenv }}
@@ -59,4 +68,10 @@
 - name: Install wsgi configuration into apache
   become: yes
   template: src=../templates/02_django.j2 dest=/etc/httpd/conf.d/02_django.conf owner=apache group=apache mode=0644
+  notify: restart apache
+
+- name: Generate static dir
+  become: yes
+  become_user: "{{ app_user }}"
+  shell: "source {{ django_virtualenv }}/bin/activate; python manage.py collectstatic --noinput chdir={{ django_path }}"
   notify: restart apache
