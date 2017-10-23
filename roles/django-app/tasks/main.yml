@@ -35,14 +35,14 @@
         extra_args=--upgrade
         virtualenv={{ django_virtualenv }}
 
-#- name: clone git repository of coastal-image-browser
-#  become: yes
-#  become_user: "{{ app_user }}"
-#  git:
-#    repo: https://github.com/openearth/coastal-image-browser.git
-#    dest: "{{ django_path }}"
-#    update: yes
-#    force: yes
+- name: clone git repository of coastal-image-browser
+  become: yes
+  become_user: "{{ app_user }}"
+  git:
+    repo: https://github.com/openearth/coastal-image-browser.git
+    dest: "{{ django_path }}"
+    update: yes
+    force: yes
 
 - name: create .my-images.cnf with images_database as default
   become: yes
