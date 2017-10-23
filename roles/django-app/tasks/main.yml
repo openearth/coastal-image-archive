@@ -35,14 +35,14 @@
         extra_args=--upgrade
         virtualenv={{ django_virtualenv }}
 
-- name: clone git repository of coastal-image-browser
-  become: yes
-  become_user: "{{ app_user }}"
-  git:
-    repo: https://github.com/openearth/coastal-image-browser.git
-    dest: "{{ django_path }}"
-    update: yes
-    force: yes
+#- name: clone git repository of coastal-image-browser
+#  become: yes
+#  become_user: "{{ app_user }}"
+#  git:
+#    repo: https://github.com/openearth/coastal-image-browser.git
+#    dest: "{{ django_path }}"
+#    update: yes
+#    force: yes
 
 - name: create .my-images.cnf with images_database as default
   become: yes
@@ -58,6 +58,13 @@
   pip:  requirements="{{ django_path }}/requirements.txt"
         extra_args=--upgrade
         virtualenv={{ django_virtualenv }}
+
+- name: enable global site packages
+  become: yes
+  become_user: "{{ app_user }}"
+  file:
+    path: "{{ django_virtualenv }}/lib/python2.7/no-global-site-packages.txt"
+    state: absent
 
 - name: Add apache to django group
   become: yes

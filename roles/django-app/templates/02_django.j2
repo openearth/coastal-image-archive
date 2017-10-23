@@ -10,5 +10,6 @@ Alias /static {{ django_static }}
 </Directory>
 
 WSGIDaemonProcess {{ django_app }} python-path={{ django_path }}:{{ django_virtualenv }}/lib/python2.7/site-packages user={{ app_user }} group={{ app_user }}
+WSGIPythonPath {{ django_path }}:{{ django_virtualenv }}/lib/python2.7/site-packages
 WSGIApplicationGroup %{GLOBAL}
 WSGIScriptAlias / {{ django_path }}/{{ django_app }}/wsgi.py
