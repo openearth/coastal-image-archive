@@ -121,7 +121,7 @@ def main():
 
     args = parser.parse_args()
 
-    D = Download(site=args.siteid, source_dir=args.sourcedir)
+    D = Download(site=args.site_id, source_dir=args.source_dir)
     D.run()
     D.report()
 
