@@ -51,7 +51,7 @@ class Download:
         os.system('rm %s' % self.lock_file)
 
     def set_image_dirs(self):
-        self.image_dirs = subprocess.check_output(['ssh', site, 'find', self.source_dir, '-type', 'd'])\
+        self.image_dirs = subprocess.check_output(['ssh', self.site, 'find', self.source_dir, '-type', 'd'])\
             .strip().split('\n')
 
     def scp(self, source, destination):
@@ -78,7 +78,7 @@ class Download:
                 image_dir = os.path.join(self.source_dir, I.datetime.strftime('%Y.%j.%m%d'))
                 if image_dir not in self.image_dirs:
                     continue
-                fname = subprocess.check_output(['ssh', site, 'find', image_dir, '-name', I.get_short()]).strip()
+                fname = subprocess.check_output(['ssh', self.site, 'find', image_dir, '-name', I.get_short()]).strip()
 
                 if fname == "":
                     continue
@@ -124,6 +124,7 @@ def main():
     D = Download(site=args.site_id, source_dir=args.source_dir)
     D.run()
     D.report()
+    D._unlock()
 
 
 if __name__ == '__main__':
