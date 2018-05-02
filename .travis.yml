@@ -1,17 +1,16 @@
 sudo: required
+
 dist: trusty
 
 language: python
 
-services:
-  - docker
-
-before_install:
-  - sudo apt-get -qq update
-  - sudo apt-get install -o Dpkg::Options::="--force-confold" --force-yes -y docker-engine software-properties-common
-
 install:
-  - pip install molecule ansible docker-py
+- pip install -r requirements.txt
 
 script:
-  - molecule test
+- ansible-playbook playbook.yml --check
+
+branches:
+  only:
+  - master
+  - develop
