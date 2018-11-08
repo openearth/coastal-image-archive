@@ -59,7 +59,7 @@ class ImageList:
         cur = db.cursor()
         n = 0
         for image in self.image_list:
-            I = ImageFormat(filename=image, site=self.site)
+            I = ImageFormat(filename=os.path.split(image)[-1], site=self.site)
             if I.format is None:
                 continue
             select_sql = "SELECT location FROM Images WHERE location='%s'" % I.get_long()

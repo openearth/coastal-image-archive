@@ -10,7 +10,7 @@ class ImageFormat:
     site = None
     datetime = None
     format = None
-    _re_short = '\d+\.c\d{1,2}\.\D+$'
+    _re_short = '\d+\.c(\d{1,2}|x)\.\D+$'
     _re_long = '\d+\.[A-Z][a-z]{2}\.[A-Z][a-z]{2}'
 
     def __init__(self, filename, site=None):
@@ -33,44 +33,52 @@ class ImageFormat:
     def interprete_short(self):
         fileparts = self.filename.split('.')
         self.epoch = int(fileparts[0])
-        self.camera = int(fileparts[1][1:])
-        self.image_type = fileparts[2]
+        self.camera = fileparts[1][1:]
+        self.image_type = '.'.join(fileparts[2:-1])
         self.ext = self.filename.split(self.image_type)[-1]
 
         self.datetime = datetime.datetime.utcfromtimestamp(self.epoch)
 
     def interprete_long(self):
-        pass
+        fileparts = self.filename.split('.')
+        self.epoch = int(fileparts[0])
+        self.camera = int(fileparts[7][1:])
+        self.image_type = '.'.join(fileparts[8:-1])
+        self.site = fileparts[6]
+        self.ext = self.filename.split(self.image_type)[-1]
+
+        self.datetime = datetime.datetime.utcfromtimestamp(self.epoch)
 
     def interprete(self):
         if self.get_format() == 'short':
             self.interprete_short()
+        elif self.get_format() == 'long':
+            self.interprete_long()
+        else:
+            print('format not detected or not supported')
 
     def get_short(self):
-        if self.get_format == 'short':
+        if self.get_format() == 'short':
             return self.filename
         else:
             filename = '.'.join(['%s' % self.epoch,
-                                 'c%i' % self.camera,
+                                 'c%s' % self.camera,
                                  self.image_type,
                                  ]) + self.ext
             return filename
 
     def get_long(self):
-        if self.get_format == 'long':
-            return self.filename
-        else:
-            path = '/' + '/'.join([self.site,
-                                   self.datetime.strftime('%Y'),
-                                   'c%i' % self.camera,
-                                   self.datetime.strftime('%j_%b.%d')])
-            filename = '.'.join(['%s' % self.epoch,
-                                 self.datetime.strftime('%a.%b.%d_%H_%M_%S.UTC.%Y'),
-                                 self.site,
-                                 'c%i' % self.camera,
-                                 self.image_type,
-                                 ]) + self.ext
-            return '/'.join([path, filename])
+        path = '/' + '/'.join([self.site,
+                               self.datetime.strftime('%Y'),
+                               'c%s' % self.camera,
+                               self.datetime.strftime('%j_%b.%d')])
+        filename = '.'.join(['%s' % self.epoch,
+                             self.datetime.strftime('%a.%b.%d_%H_%M_%S.UTC.%Y'),
+                             self.site,
+                             'c%s' % self.camera,
+                             self.image_type,
+                             ]) + self.ext
+        return '/'.join([path, filename])
 
     @property
     def dayminute(self):
