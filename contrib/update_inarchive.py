@@ -33,7 +33,7 @@ def update_inarchive(images_dir=DEFAULT_IMAGES_DIR, mysql_default_file=DEFAULT_M
     n = 0
     for record in cur.fetchall():
         # construct full path
-        fullpath = os.path.join(images_dir, record[0])
+        fullpath = '%s%s' % (images_dir, record[0])
 
         if os.path.exists(fullpath):
             # execute update statement to set inarchive=1
