@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import os
-# import MySQLdb
+import MySQLdb
 import argparse
 
 # defaults
