@@ -18,12 +18,14 @@ class Download:
     source_dir = None
     database_default_file = '~/.my.cnf'
     image_dirs = None
+    sub_dirs = True
     started = None
     count = 0
 
-    def __init__(self, site, source_dir):
+    def __init__(self, site, source_dir, sub_dirs=True):
         self.site = site
         self.source_dir = source_dir
+        self.sub_dirs = sub_dirs
 
         self.started = datetime.datetime.utcnow().strftime('%c UTC')
         self.check_lock()
@@ -75,7 +77,10 @@ class Download:
             I = ImageFormat(item[0])
             destination_file = '%s%s' % (self.destination_dir, item[0])
             if not os.path.isfile(destination_file):
-                image_dir = os.path.join(self.source_dir, I.datetime.strftime('%Y.%j.%m%d'))
+                if self.sub_dirs:
+                    image_dir = os.path.join(self.source_dir, I.datetime.strftime('%Y.%j.%m%d'))
+                else:
+                    image_dir = self.source_dir
                 if image_dir not in self.image_dirs:
                     continue
                 fname = subprocess.check_output(['ssh', self.site, 'find', image_dir, '-name', I.get_short()]).strip()
@@ -117,11 +122,12 @@ class Download:
 def main():
     parser = argparse.ArgumentParser(description='Coastal Image download manager.')
     parser.add_argument('-i', '--site-id', help='id of site (defaults to name of site)')
-    parser.add_argument('-d', '--source-dir', help='destination directory')
+    parser.add_argument('-d', '--source-dir', help='source directory')
+    parser.add_argument('-l', '--sub-dirs', action='store_true', help='True if source directory has date sub directories')
 
     args = parser.parse_args()
 
-    D = Download(site=args.site_id, source_dir=args.source_dir)
+    D = Download(site=args.site_id, source_dir=args.source_dir, sub_dirs=args.sub_dirs)
     D.run()
     D.report()
     D._unlock()
