@@ -64,10 +64,11 @@ class ImageList:
                 continue
             select_sql = "SELECT location FROM Images WHERE location='%s'" % I.get_long()
             cur.execute(select_sql)
+            print(I.get_long(), self.site, I.epoch, I.camera, I.image_type, I.dayminute)
             if cur.rowcount == 0:
                 insert_sql = "INSERT INTO Images (location,site,epoch,camera,type,dayminute) " + \
                              "VALUES ('%s', '%s', %i, %i, '%s', %i)" % (
-                                 I.get_long(), self.site, I.epoch, I.camera, I.image_type, I.dayminute)
+                                 I.get_long(), self.site, I.epoch, int(I.camera), I.image_type, I.dayminute)
                 cur.execute(insert_sql)
                 db.commit()
                 n += 1
