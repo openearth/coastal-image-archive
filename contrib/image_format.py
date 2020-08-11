@@ -105,9 +105,9 @@ def main():
     I = ImageFormat(args.filename, site=args.site[0])
 
     if args.format.lower() == 'short':
-        print I.get_short()
+        print(I.get_short())
     elif args.format.lower() == 'long':
-        print I.get_long()
+        print(I.get_long())
 
 if __name__ == '__main__':
     main()
