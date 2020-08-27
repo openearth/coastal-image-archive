@@ -11,9 +11,9 @@ import argparse
 
 
 class Download:
-    lock_file = '/opt/dim/download_data.lock'
+    lock_file = os.path.join(os.path.expanduser('~'), 'download_data.lock')
     site = None
-    limit = 20
+    limit = 72
     destination_dir = '/data/images'
     source_dir = None
     database_default_file = '~/.my.cnf'
@@ -22,9 +22,11 @@ class Download:
     started = None
     count = 0
 
-    def __init__(self, site, source_dir, sub_dirs=True):
+    def __init__(self, site, source_dir, destination_dir=None, sub_dirs=True):
         self.site = site
         self.source_dir = source_dir
+        if destination_dir is not None:
+            self.destination_dir = destination_dir
         self.sub_dirs = sub_dirs
 
         self.started = datetime.datetime.utcnow().strftime('%c UTC')
@@ -42,6 +44,7 @@ class Download:
             os.system('rm %s' % self.lock_file)
 
         if os.path.exists(self.lock_file):
+            print('{} found, now exiting'.format(self.lockfile))
             sys.exit(0)
         else:
             os.system('touch %s' % self.lock_file)
@@ -72,9 +75,10 @@ class Download:
         select_sql = "select location from Images where site='%s' and inarchive=0 order by epoch desc;" % self.site
         cur.execute(select_sql)
         for item in cur.fetchall():
-            if self.count > self.limit:
+            if self.count >= self.limit:
+                # break out of this loop when limit of files to copy in one run has been reached
                 break
-            I = ImageFormat(item[0])
+            I = ImageFormat(os.path.split(item[0])[-1])
             destination_file = '%s%s' % (self.destination_dir, item[0])
             if not os.path.isfile(destination_file):
                 if self.sub_dirs:
@@ -97,12 +101,19 @@ class Download:
 
     def validate(self, scp_cmd):
         result = False
+        # number of digit groups in scp command
         digits = re.findall('\d+', scp_cmd)
+        digits_src = len(re.findall('\d+', self.source_dir))
+        digits_dst = len(re.findall('\d+', self.destination_dir))
+        digits_sub_dir = 3 if self.sub_dirs else 0
+        digits_valid = 13 + digits_src + digits_dst + digits_sub_dir
         exts = re.findall('\.c\d{1,2}[\.\w]+', scp_cmd)
-        check1 = len(digits) == 16
+        check1 = len(digits) == digits_valid
+        print(check1, digits_valid)
         check2 = len(exts) == 2
         if check1 and check2:
-            check3 = digits[3] == digits[9]  # epoch time should be equal
+            check3 = digits[-13-digits_dst] == digits[-7]  # epoch time should be equal
+            print(check3, (-13-digits_dst))
             check4 = exts[0] == exts[1]  # extensions (including camera number) should be equal
             if check3 and check4:
                 result = True
@@ -122,12 +133,13 @@ class Download:
 def main():
     parser = argparse.ArgumentParser(description='Coastal Image download manager.')
     parser.add_argument('-i', '--site-id', help='id of site (defaults to name of site)')
-    parser.add_argument('-d', '--source-dir', help='source directory')
+    parser.add_argument('-s', '--source-dir', help='source directory')
+    parser.add_argument('-d', '--destination-dir', help='destination directory')
     parser.add_argument('-l', '--sub-dirs', action='store_true', help='True if source directory has date sub directories')
 
     args = parser.parse_args()
 
-    D = Download(site=args.site_id, source_dir=args.source_dir, sub_dirs=args.sub_dirs)
+    D = Download(site=args.site_id, source_dir=args.source_dir, destination_dir=args.destination_dir, sub_dirs=args.sub_dirs)
     D.run()
     D.report()
     D._unlock()
