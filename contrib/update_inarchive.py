@@ -9,7 +9,7 @@ DEFAULT_IMAGES_DIR = '/data/images'
 DEFAULT_MYSQL_DEFAULT_FILE = '~/.my.cnf'
 
 
-def update_inarchive(images_dir=DEFAULT_IMAGES_DIR, mysql_default_file=DEFAULT_MYSQL_DEFAULT_FILE):
+def update_inarchive(images_dir=DEFAULT_IMAGES_DIR, image_location=None, mysql_default_file=DEFAULT_MYSQL_DEFAULT_FILE):
     """
     Update inarchive column of MySQL database where it is 0 and the related image appears to be available.
 
@@ -24,7 +24,10 @@ def update_inarchive(images_dir=DEFAULT_IMAGES_DIR, mysql_default_file=DEFAULT_M
     cur = db.cursor()
 
     # execute select query to find all images where inarchive=0
-    select_sql = 'SELECT location FROM Images WHERE inarchive=0'
+    if image_location is None:
+        select_sql = 'SELECT location FROM Images WHERE inarchive=0'
+    else:
+        select_sql = 'SELECT location FROM Images WHERE inarchive=0 AND location="{}"'.format(image_location)
     cur.execute(select_sql)
 
     print('%i rows selected' % cur.rowcount)
